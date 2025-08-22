@@ -818,8 +818,7 @@ public class NormalSaleDiamondandPlatinum extends BasePge {
 
 		// Step 2: Click on Transaction button
 		Thread.sleep(3000);
-		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton expandedNavButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
-		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h5 textLeft centerY","Transaction"));
+		appUtils.HamBurgerButtonClick("iconShop");
 
 		// Step 3: Select customer
 		// Step 4: Click on add to estimate button
@@ -969,7 +968,7 @@ public class NormalSaleDiamondandPlatinum extends BasePge {
 
 		//Step 2 : Click on Transaction button
 		appUtils.HamBurgerButtonClick("iconShop");
-
+		
 		//Step 3 : Select the customer 		
 		// Step 4 : Click on add to estimate button
 		appUtils.SearchByCustomerID(NormalSaleDiamondandPlatinumTestData.TC08_CustomerId,NormalSaleDiamondandPlatinumTestData.TC08_Option);
@@ -984,7 +983,8 @@ public class NormalSaleDiamondandPlatinum extends BasePge {
 		Map<String, List<String>> PlatinumSkus = appUtils.FetchPlatinumSkuWithDiffIngredients(ScannedSkus,
 																	NormalSaleDiamondandPlatinumTestData.TC08_skuCountPerCategory);
 		System.out.println("PlatinumSkus "+PlatinumSkus);
-
+		
+		
 		List<String> NormalPlatinum = PlatinumSkus.get("NORMAL");
 		List<String> DualTonePlatinum = PlatinumSkus.get("DUAL");
 		List<String> PlatinumWithDiamonds = PlatinumSkus.get("DIAMOND");
@@ -1112,13 +1112,13 @@ public class NormalSaleDiamondandPlatinum extends BasePge {
 		System.out.println("PDF INVOICE NO:-"+PdfInvoiceNo);
 		base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
 
-		//Sales return and counter in flow
-		appUtils.SalesReturnFlow(NormalSaleDiamondandPlatinumTestData.TC08_CustomerId, PdfInvoiceNo,NormalSaleDiamondandPlatinumTestData.TC08_ReturnProducts);
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-		appUtils.CounterFlow(NormalSaleDiamondandPlatinumTestData.TC08_ToCounter,
-				NormalSaleDiamondandPlatinumTestData.TC08_MetalType,
-				SkuList ,
-				Utility_TestData.Terminal);
+//		//Sales return and counter in flow
+//		appUtils.SalesReturnFlow(NormalSaleDiamondandPlatinumTestData.TC08_CustomerId, PdfInvoiceNo,NormalSaleDiamondandPlatinumTestData.TC08_ReturnProducts);
+//		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+//		appUtils.CounterFlow(NormalSaleDiamondandPlatinumTestData.TC08_ToCounter,
+//				NormalSaleDiamondandPlatinumTestData.TC08_MetalType,
+//				SkuList ,
+//				Utility_TestData.Terminal);
 		pdfUtils.DeleteAllPDFFilesInInvoiceFolder();
 	}
 

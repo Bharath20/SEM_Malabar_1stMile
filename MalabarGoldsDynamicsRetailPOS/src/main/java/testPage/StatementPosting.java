@@ -178,7 +178,7 @@ public class StatementPosting extends BasePge {
 		//Step 7: Click on new --> enter start date --> enter to date
 		wait.until(ExpectedConditions.visibilityOfElementLocated(StatementPostingObj.Btn_Add("SystemDefinedNewButton"))); 
 		base.buttonClick(StatementPostingObj.Btn_Add("SystemDefinedNewButton"));
-		base.setData(StatementPostingObj.Edt_StoreNo("grid"), StatementPostingTestData.TC310_StoreID);
+		base.setData(StatementPostingObj.Edt_StoreNo("grid"), UtilityTestData.WarehouseId);
 		base.pressKey(StatementPostingObj.Edt_StoreNo("grid"), "ENTER");
 		base.scrollToElement(NormalSaleGoldAndSilverObj.Ele_WarehouseName("TransactionInterval_transFromDate"));
 		base.setData(NormalSaleGoldAndSilverObj.Ele_WarehouseName("TransactionInterval_transFromDate"), Date);

@@ -160,5 +160,51 @@ public class NormalSalesReturnGoldSilverReturnSaleCounter_TestData
 	public static List<String> TC12_ItemList           = Arrays.asList("1","Gold","Gold");
 	public static List<String> TC12_ReturnProducts      = Arrays.asList("Gold");
 
+	//TC21
+	public static List<String>TC21_Products = Arrays.asList("2", "Gold", "Gold");
+	public static String TC21_CustomerNo = "8848123534";
+	public static List<String>TC21_ProductsToReturn = Arrays.asList("Gold", "Gold");
+	public static String TC21_CustomerName = "CHANDHANA BABU";
+	public static int TC21_SaleProductCount = 1;
+	public static String TC21_TransferType = "Inter";
+	public static String TC21_FromCounter = "Gold";
+	public static String TC21_MetalType = "Gold";
+	public static String TC21_OldProduct = "OG";
+	public static String TC21_Configuration = "22k";
+	public static String TC21_Pieces = "1";
+	public static String TC21_GrossWeight = "2";
+	public static String TC21_PaymentMode = "Convert to Advance";
+	public static String TC21_TransactionTypeReturn = "Sales Return";
+	public static String TC21_TransactionTypeExchange = "Exchange";
+	public static String TC21_TransactionTypeSales = "Sales";
+	public static String TC21_QcAndSmithPerson = "AKASH T V";
+
+	//TC22
+
+	public static String TC22_CustomerId     		= "33CA00161596";
+	public static String TC22_CustomerName   		= "HASNA EK";	
+	public static int TC22_SKUCount          		= 2;
+	public static String TC22_TranferType    		= "Inter";
+	public static String TC22_FromCounter    		= "Gold";
+	public static String TC22_MetalType      		= "Gold";
+	public static List<String> TC22_SkuList  		= Arrays.asList("2","Gold","Gold");
+	public static List<String> TC22_ReturnProducts 	= Arrays.asList("Gold","Gold");
+	public static String TC22_Configuration 		= "22k";
+	public static String TC22_PurchaseOrExchange	= "NExchange";
+	public static String TC22_QCPerson 				= "AKASH T V";
+	public static String TC22_SmithPerson 			= "AKASH T V";
+	public static String TC22_GrossPieces 			= "1";
+	public static String TC22_GrossWeight 			= "1";
+	public static String TC22_OgItemName 			= "OG";
+	public static String TC22_PaymentMode 			= "Convert to Advance";
+	public static String TC22_DepositType 			= "Normal Advance";
+	public static String TC22_TransactionType1   	= "Sales Return";
+	public static String TC22_TransactionType2   	= "Exchange";
+	public static String TC22_TransactionType3 		= "Sales";
+	public static String TC22_PaymentDetails 		= "Adjustment";
+	public static String TC22_PaymentMethod 		= "HDFC (Credit Card)";
+	public static String TC22_ApprCode      		= "12345";
+	public static String TC22_CardNo 				= "12333";
+	public static String TC22_TotalDiamond			= "0";
 }
 

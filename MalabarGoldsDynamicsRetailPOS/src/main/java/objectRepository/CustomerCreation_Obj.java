@@ -35,7 +35,10 @@ public class CustomerCreation_Obj {
 	public By Ele_RecieptLang(String Option,String text) {return By.xpath("//select[@id='"+Option+"']/option[@value='"+text+"']");}
 	public By Ele_ERPOptionSel(String Option) {return By.xpath("//span[text()='"+Option+"']/parent::li");}
 
-  
+	public By Ele_PhoneNumber(String cls,String txt) {return By.xpath("//a[@class='"+cls+"']/following::div[@class='"+txt+"']");}
+
+	public By Ele_CompanyPhoneNumber(String name,String cls) {return By.xpath("//a[contains(@data-bind,'"+name+"')]/following::div[@class='"+cls+"']");}
+	public By Ele_BankAccounts(String id) {return By.xpath("//span[contains(@id,'"+id+"')]");}
 }
 
 

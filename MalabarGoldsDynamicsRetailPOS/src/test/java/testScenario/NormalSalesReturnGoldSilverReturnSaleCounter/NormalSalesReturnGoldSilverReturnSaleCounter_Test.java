@@ -75,5 +75,17 @@ public class NormalSalesReturnGoldSilverReturnSaleCounter_Test extends BaseTest
 		normalSalesReturnGoldSilverReturnSaleCounter = new NormalSalesReturnGoldSilverReturnSaleCounter(getDriver());
 		normalSalesReturnGoldSilverReturnSaleCounter.TC12_NormalSalesReturnGoldSilverReturnSaleCounter();
 	}
+	@Test()
+	public void TC21_NormalSalesReturnGoldSilverReturnSaleCounterTest() throws Exception 
+	{	
+		normalSalesReturnGoldSilverReturnSaleCounter = new NormalSalesReturnGoldSilverReturnSaleCounter(getDriver());
+		normalSalesReturnGoldSilverReturnSaleCounter.TC21_NormalSalesReturnGoldSilverReturnSaleCounter();
+	}
 
+	@Test()
+	public void TC22_NormalSalesReturnGoldSilverReturnSaleCounterTest() throws Exception 
+	{	
+		normalSalesReturnGoldSilverReturnSaleCounter = new NormalSalesReturnGoldSilverReturnSaleCounter(getDriver());
+		normalSalesReturnGoldSilverReturnSaleCounter.TC22_NormalSalesReturnGoldSilverReturnSaleCounter();
+	}
 }

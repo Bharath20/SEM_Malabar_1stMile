@@ -19,6 +19,7 @@ import org.testng.Assert;
 import objectRepository.LoginPage_Obj;
 import objectRepository.NormalSaleGoldandSilver_Obj;
 import objectRepository.NormalSalesReturnGoldSilverReturnSaleCounter_Obj;
+import objectRepository.OldPurchaseExchangeOwnorOtherGoldorSilverSale_Obj;
 import testData.CommonData;
 import testData.NormalSaleGoldandSilver_TestData;
 import testData.NormalSalesReturnGoldSilverReturnSaleCounter_TestData;
@@ -45,6 +46,7 @@ public class NormalSalesReturnUncutorPrecia extends BasePge {
 	LoginPage_Obj LoginPageObj=new LoginPage_Obj();
 	Utility_TestData UtilityTestData=new Utility_TestData();
 	NormalSaleGoldandSilver_Obj NormalSaleGoldAndSilverObj = new NormalSaleGoldandSilver_Obj();
+	OldPurchaseExchangeOwnorOtherGoldorSilverSale_Obj OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj=new OldPurchaseExchangeOwnorOtherGoldorSilverSale_Obj();
 	NormalSalesReturnGoldSilverReturnSaleCounter_Obj NormalSalesReturnGoldSilverReturnSaleCounterObj = new NormalSalesReturnGoldSilverReturnSaleCounter_Obj();	
 	NormalSalesReturnUncutorPrecia_TestData NormalSalesReturnUncutorPreciaTestData=new NormalSalesReturnUncutorPrecia_TestData();
 
@@ -240,13 +242,13 @@ public class NormalSalesReturnUncutorPrecia extends BasePge {
 		{		    
 			String ExpectedName = ProdNames.get(i).trim();
 			double ExpectedQty = Double.parseDouble(ProdQtyList.get(i).trim().replace("-", "").replaceAll("[^\\d.]", ""));
-			double ExpectedPrice = Double.parseDouble(ProdPriceList.get(i).trim().replace("â‚¹", "").replace(",", "").replace("-", "").replaceAll("[^\\d.]", ""));
+			double ExpectedPrice = Double.parseDouble(ProdPriceList.get(i).trim().replace("\u20B9", "").replace(",", "").replace("-", "").replaceAll("[^\\d.]", ""));
 
 			String BillScreenProdName = BillScrnProdName.get(i).getText();
 			String BillScreenProQty = BillScrnProdQty.get(i).getText().replace("-", "").trim();
 			String BillScreenProdPrice = BillScrnProdPrice.get(i).getText().replace("-", "").trim();
 			double ActualQty = Double.parseDouble(BillScreenProQty);
-			double ActualPrice = Double.parseDouble(BillScreenProdPrice.replace("₹", "").replace(",", "").replaceAll("[^\\d.]", "").trim());
+			double ActualPrice = Double.parseDouble(BillScreenProdPrice.replace("\u20B9", "").replace(",", "").replaceAll("[^\\d.]", "").trim());
 
 			asrt.assertEquals(ExpectedName, BillScreenProdName,"Item Name mismatch: Expected" +ExpectedName+ "but got" +BillScreenProdName+ "in billing screen");
 			asrt.assertEquals(ExpectedQty, ActualQty, 1.0, "Quantity mismatch: Expected" +ExpectedQty+ "but got" +ActualQty+ "in billing screen");
@@ -363,7 +365,7 @@ public class NormalSalesReturnUncutorPrecia extends BasePge {
 	// Automation ID : TC37
 	// Author : Christy Reji
 	// </summary>
-	
+
 	public void TC37_NormalSalesReturnUncutorPrecia() throws Exception {
 
 		// Step 1: Login to POS
@@ -525,8 +527,8 @@ public class NormalSalesReturnUncutorPrecia extends BasePge {
 		String TotalGrossWeightReturn   = TransactionRecallDataLineReturn.get("GrossWeight");
 		String TotalNewNetWeightReturn  = TransactionRecallDataLineReturn.get("NetWeight");
 		String TaxReturn 				= TransactionRecallDataLineReturn.get("Tax");
-		String TotalAmountReturn	    = TransactionRecallDataLineReturn.get("TotalAmount").replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim();
-		String NetTotalReturn 			= TransactionRecallDataLineReturn.get("NetTotal").replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim();
+		String TotalAmountReturn	    = TransactionRecallDataLineReturn.get("TotalAmount").replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim();
+		String NetTotalReturn 			= TransactionRecallDataLineReturn.get("NetTotal").replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim();
 		String LinesCountReturn 		= TransactionRecallDataLineReturn.get("LinesCount");
 
 		erpUtils.ErpValidateTransactionLineCalculation(TransactionRecallDataLineReturn, ScannedSkuDataMapSale);
@@ -568,19 +570,19 @@ public class NormalSalesReturnUncutorPrecia extends BasePge {
 			Assert.assertEquals(ActualNetWt, ExpectedNetWt, "Mismatch in Net Weight for SKU_" + i+"in PDF Sale Return Invoice details");
 			Assert.assertEquals(ActualAmount, ExpectedAmount, "Mismatch in Total Amount for SKU_" + i+"in PDF Sale Return Invoice details");
 		}
-		double ActualTaxableValue 		   = Math.abs(Double.parseDouble(((String) InvoiceDetails.get("SubTotal")).replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim()));
+		double ActualTaxableValue 		   = Math.abs(Double.parseDouble(((String) InvoiceDetails.get("SubTotal")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim()));
 		double ExpectedTaxableValue  	   = Double.parseDouble(ExpTaxableValueReturnSale);
 
-		double ActualGrossAmount 		   = Math.abs(Double.parseDouble(((String) InvoiceDetails.get("SubTotal")).replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim()));
+		double ActualGrossAmount 		   = Math.abs(Double.parseDouble(((String) InvoiceDetails.get("SubTotal")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim()));
 		double ExpectedGrossAmount 		   = Double.parseDouble(ExpGrossAmountReturnSale);
 
-		double ActualTotalGrossWeight      = Math.abs(Double.parseDouble(((String) InvoiceDetails.get("TotalGrossWeight")).replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim()));
+		double ActualTotalGrossWeight      = Math.abs(Double.parseDouble(((String) InvoiceDetails.get("TotalGrossWeight")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim()));
 		double ExpectedTotalGrossWeight    = Double.parseDouble(ExpTotalGrossWtReturnSale);
 
-		double ActualNetWeight			   = Double.parseDouble(((String) InvoiceDetails.get("TotalNetWeight")).replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim());
+		double ActualNetWeight			   = Double.parseDouble(((String) InvoiceDetails.get("TotalNetWeight")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim());
 		double ExpectedNetWeight 		   = Double.parseDouble(ExpTotalNetWtReturnSale);
 
-		double ActualNetTotal 			   = Double.parseDouble(((String) InvoiceDetails.get("NetTotal")).replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim());
+		double ActualNetTotal 			   = Double.parseDouble(((String) InvoiceDetails.get("NetTotal")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim());
 		double ExpectedNetTotal 		   = Double.parseDouble(ExpTotalNetValueReturnSale);
 
 		Assert.assertEquals(ActualTaxableValue, ExpectedTaxableValue,1, "Mismatch in Taxable Value Actual "+ActualTaxableValue+" and Expected Taxable Value "+ExpectedTaxableValue+"in PDF Sale Return Invoice details");
@@ -680,4 +682,1061 @@ public class NormalSalesReturnUncutorPrecia extends BasePge {
 
 		pdfUtils.DeleteAllPDFFilesInInvoiceFolder();
 	}
+	
+	// <summary>
+	// Test Case Title : Sales return multiple Uncut with multiple sale
+	// Automation ID : TC34
+	// Author : Jhoncy Joseph
+	// </summary>
+	public void TC34_NormalSalesReturnUncutorPrecia() throws Exception {
+
+		// Step 1: Login to POS
+		// Step 2: Click on Transaction button
+		Map<String, Object> InvoiceDetails = erpUtils.GetInvoiceDetailsAfterNormalSale(NormalSalesReturnUncutorPreciaTestData.TC34_CustomerNo, NormalSalesReturnUncutorPreciaTestData.TC34_ItemList);
+		String ActualCustomerName          = pdfUtils.ExtractCustomerNameFromSaleInvoice();
+		String InvoiceNo            = (String) InvoiceDetails.get("InvoiceNo");
+		String TotalNetWeightReturn = (String) InvoiceDetails.get("TotalNetWeight");
+		String SkuPurityReturn      = (String) InvoiceDetails.get("FirstSkuPurity");
+		String SkuGoldRateReturn    = (String) InvoiceDetails.get("FirstSkuGoldRate");
+		String TotalRgWeightReturn  = (String) InvoiceDetails.get("TotalRgWeight");
+
+		// Extract SKU-wise map
+		Map<String, String> SkuWiseData = (Map<String, String>) InvoiceDetails.get("SKUWiseDetails");
+		Map<String, String> ScannedSkuDataMapSale = (Map<String, String>) InvoiceDetails.get("ScannedSKUDataMap");
+		Map<String, String> TransactionDataLineSale = (Map<String, String>) InvoiceDetails.get("TransactionDataLine");
+		String LinesCountSale = TransactionDataLineSale.get("LinesCount");
+
+		String ErpGoldRateFor24K= erpUtils.SetMetalRateInERP(SkuGoldRateReturn, SkuPurityReturn);
+
+		Thread.sleep(120000); //Wait needed for ERP Gold Rate to Change
+
+		//Step 3 : Select customer 
+		//Step 4 : Click on add to estimation button
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
+		appUtils.SearchByCustomerID(NormalSalesReturnUncutorPreciaTestData.TC34_CustomerNo,UtilityTestData.MenuBarOptions[5]);
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
+		//Step 5 : Click on customer adjustment button
+		//Step 6 : Click on return transaction button at the billing screen
+		//Step 7 : Enter the Receipt Number
+		//Step 8 : Select return product (multiple uncut) one by one and click on return button
+		//Expected Result : The product meant to be returned should be previously bought by the same customer.
+		ReturnDetails Details       = appUtils.ReturnMultipleProductsWithDetails(InvoiceNo, NormalSalesReturnUncutorPreciaTestData.TC34_ReturnProducts);
+		String ExpectedCustomerName = NormalSalesReturnUncutorPreciaTestData.TC34_CustomerName;
+
+		asrt.assertEquals(ActualCustomerName,ExpectedCustomerName ," Customer name for sale is not the same as the customer name from return. " +"ExpectedCustomerNameFrom MethodInvoicePdf: " + ActualCustomerName + ", but found: " + ExpectedCustomerName);
+
+		//Step 9  :  Scan multiple SKU (Gold)
+		//Step 10 :  Click on add to cart button
+		//Step 11: Choose a sales representative
+		//Expected Result: Check calculationNote:Billing Screen*No of Product lines*Displayed Item Name*Displayed Quantity*Displayed TOTAL (without Tax)*Displayed Subtotal*TAX*Total Amount
+		List<String> SkuList = new ArrayList<>();
+		Map<String, String> ScannedSkuDataMap = new LinkedHashMap<>();
+		int SkuCounter = 1;
+
+		// Gold SKUs
+		List<String> GoldSkus = appUtils.SelectMultipleSKUs(
+				NormalSalesReturnUncutorPreciaTestData.TC34_SkuCount,
+				NormalSalesReturnUncutorPreciaTestData.TC34_TransferType,
+				NormalSalesReturnUncutorPreciaTestData.TC34_FromCounter,
+				NormalSalesReturnUncutorPreciaTestData.TC34_MetalType);
+		SkuList.addAll(GoldSkus);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton expandedNavButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h5 textLeft centerY", "Transaction")); 
+
+		erpUtils.ResetRemainingReturnWeight();
+		for (String Sku : SkuList) {
+			appUtils.SKUIngridentTableValues(Sku, SkuCounter, ScannedSkuDataMap);
+			Map<String, String> CurrentSkuData = appUtils.ExtractDataForSku(ScannedSkuDataMap, SkuCounter);
+			erpUtils.ErpSkuIngredientItemCalculation(CurrentSkuData, SkuCounter,TotalRgWeightReturn,SkuPurityReturn,SkuGoldRateReturn,ErpGoldRateFor24K);
+			SkuCounter++;
+		}	
+		//TranscationPageVerifyLines
+		Map<String, String> TransactionDataLine = appUtils.TransactionSKUsLinesVerify(SkuList, ScannedSkuDataMap);
+		String SubTotal		 		= TransactionDataLine.get("Subtotal");
+		String Discount 			= TransactionDataLine.get("Discount");
+		String TotalGrossWeight 	= TransactionDataLine.get("GrossWeight");
+		String TotalNewNetWeight 	= TransactionDataLine.get("NetWeight");
+		String Tax 					= TransactionDataLine.get("Tax");
+		String TotalAmount 			= TransactionDataLine.get("TotalAmount");
+		String NetTotal			    = TransactionDataLine.get("NetTotal");
+		String LinesCount		    = TransactionDataLine.get("LinesCount");
+		Map<String, String> AdjustedScannedSkuMap = erpUtils.MergeScannedSkuDataMaps(ScannedSkuDataMapSale, ScannedSkuDataMap);
+		erpUtils.ErpValidateTransactionLineCalculation(TransactionDataLine, AdjustedScannedSkuMap,LinesCountSale);
+
+		String AmountDue = base.GetText(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+		if (AmountDue != null && !AmountDue.trim().isEmpty()) {
+			AmountDue = AmountDue.replaceAll("[^0-9.-]", "").trim();
+			double NumericAmount = Double.parseDouble(AmountDue);
+			System.out.println("The Amount: "+NumericAmount);
+			if (NumericAmount < 0.00) {
+
+				// Step 12: Click on Save to estimation button in billing screen
+				// Step 13: Save Estimate
+				// Expected Result:Verify the invoice details
+				base.buttonClick(LoginPageObj.Edt_AlertText("Billing"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_abc("buttonsContainer positionRelative","Back" ));
+				base.buttonClick(LoginPageObj.Edt_AlertText("Save To Estimate"));
+				String ActualEstmnNumber = base.GetValue(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Estimation no"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAdd"));
+
+				// PDF Verification Step
+				Thread.sleep(3000);
+				String ProFormaInvoiceName = pdfUtils.DownloadAndRenameLatestPDF("TC34_ProformaInvoice");
+				Thread.sleep(2000);
+				String ProFormaInvoicePath = System.getProperty("user.dir") + "\\Invoices\\" + ProFormaInvoiceName;
+				String Gst                 = Tax;
+				String TaxableValue		   = SubTotal;
+				String InvoiceTotal        = TotalAmount;
+				String TotalAmnt           = SubTotal;
+				double TotalNetWeight      = Double.parseDouble(TotalNewNetWeight) - Double.parseDouble(TotalNetWeightReturn);
+				pdfUtils.ProFormaInvoicePdfWithOldGoldNegativeValue(
+						ProFormaInvoicePath,
+						TaxableValue,
+						Gst,
+						InvoiceTotal,
+						NetTotal,
+						TotalAmnt
+						);
+
+				// Step 14: Recall estimate from cashier screen
+				// Expected Result: Verify whether the recalled item is the same as the item in the cart.(Estimation No Check)
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Cash("tab-button-ButtonGrid2","text semilight primaryFontColor"));
+				base.buttonClick(LoginPageObj.Edt_AlertText("Recall Estimate"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				Thread.sleep(2000);
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+				Thread.sleep(2000);
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell",ActualEstmnNumber));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconGo"));
+				String ExpectedEstmnNumberSalesReturn= base.GetValue(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Estimation no"));
+
+				Assert.assertEquals(ActualEstmnNumber, ExpectedEstmnNumberSalesReturn,"Mismatch in Estimation number Actual is "+ActualEstmnNumber+" and Expected Estimation number"+ExpectedEstmnNumberSalesReturn+" in Recall Estimation page"); 
+
+				// Step 15: Select the Transaction Type as Sales Return
+				base.buttonClick(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"));
+				base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"), NormalSalesReturnUncutorPreciaTestData.TC34_TransactionType1);
+
+				// Step 16: Click on Process Estimation
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAccept"));
+
+				// Expected Result: Cashier Screen after recall*No of Product lines*Displayed Item Name*Displayed Quantity*Displayed TOTAL (without Tax)*Displayed Subtotal*TAX*Total Amount
+				base.setZoom(driver, 60);
+				Thread.sleep(3000);
+				Map<String, String> TransactionRecallDataLineReturn = appUtils.TransactionSKUsLinesVerify(SkuList, ScannedSkuDataMap);
+				String SubTotalReturn 			= TransactionRecallDataLineReturn.get("Subtotal");
+				String DiscountReturn 			= TransactionRecallDataLineReturn.get("Discount");
+				String TotalGrossWeightReturn   = TransactionRecallDataLineReturn.get("GrossWeight");
+				String TotalNewNetWeightReturn  = TransactionRecallDataLineReturn.get("NetWeight");
+				String TaxReturn 				= TransactionRecallDataLineReturn.get("Tax");
+				String TotalAmountReturn	    = TransactionRecallDataLineReturn.get("TotalAmount").replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim();
+				String NetTotalReturn 			= TransactionRecallDataLineReturn.get("NetTotal").replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim();
+				String LinesCountReturn 		= TransactionRecallDataLineReturn.get("LinesCount");
+
+				mathUtils.ValidateTransactionLineCalculation(TransactionRecallDataLineReturn, ScannedSkuDataMapSale);
+
+				String TransAmountDue = base.GetText(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_AmountDue("h1","cartView_amountDueLink"));
+				double TransTotalAmount = Double.parseDouble(TransAmountDue.replaceAll("[^\\d.]", "").trim());
+
+				//Step 17.Click on the amount
+				//Step 18.Click on Convert to Advance
+				//Step 18.1.Select Deposit type as ""Normal""
+				//Step 18.2.Select Sales person
+				//Step 18.3.Select Due date
+				//Step 18.4.Enter Remarks
+				//Step 18.5.Click on Add Nominee details
+				//Step 18.6.Enter Nominee name
+				//Step 18.7.Select Nominee relation
+				//Step 18.8.Click on check box(Same as customer address)
+				//Step 18.9.Click on OK button
+				//Step 19.Click on Deposit button
+				//Step 20.Click on the Amount for Receipt
+				//Expected:Check Return Invoice details
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+				Thread.sleep(2000);
+				base.buttonClick(LoginPageObj.Edt_AlertText(NormalSalesReturnUncutorPreciaTestData.TC34_PaymentMode2));	
+				Thread.sleep(4000);
+				base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Ele_SalesPerson(NormalSalesReturnUncutorPreciaTestData.TC34_SalePersonNumber), NormalSalesReturnUncutorPreciaTestData.TC34_SalePersonName);
+				base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Ele_DrpdwnYear("win-datepicker-year win-dropdown win-order2 displayOrder3"), NormalSalesReturnUncutorPreciaTestData.TC34_DueYear);
+				base.scrollToElement(NormalSaleGoldAndSilverObj.Ele_Remarks("6"));
+				base.setData(NormalSaleGoldAndSilverObj.Ele_Remarks("6"), UtilityTestData.Remarks);
+				base.scrollToElement(NormalSaleGoldAndSilverObj.Btn_Deposit("Add Nominee Details"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Add Nominee Details"));
+				Thread.sleep(1000);
+				base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Nominee name"),NormalSalesReturnUncutorPreciaTestData.TC34_NomineeName);
+				base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Nominee relation"), NormalSalesReturnUncutorPreciaTestData.TC34_NomineeRelation);
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_Name("NomineeChkBox"));
+				base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+				base.scrollToElement(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));	
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+				Thread.sleep(3000);	
+
+				base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+				base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Btn_Close("cancelButton primaryButton","Close"));
+				Thread.sleep(8000);
+				base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_NormalAdvInvoice("win-itembox","win-item","DOCUMENT NORMAL ADV. INVOICE"));
+				base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Btn_Close("btnblue","PRINT"));
+				Map<String, String> Result = pdfUtils.NormalAdvancePdfValidation();	
+
+				String AdvanceReceived = Result.get("AdvanceReceived");
+				String FixedGoldRate = Result.get("FixedGoldRate");
+				String MaxGoldRate = Result.get("MaxGoldRate");
+				String ApproxWeight = Result.get("ApproxWeight");
+				String DepositType = Result.get("DepositType");
+				double PdfAdvanceReceived = Double.parseDouble(AdvanceReceived.replaceAll("[^\\d.]", "").trim());
+				double PdfFixedGoldRate = Double.parseDouble(FixedGoldRate.replaceAll("[^\\d.]", "").trim());
+				double PdfMaxGoldRate = Double.parseDouble(MaxGoldRate.replaceAll("[^\\d.]", "").trim());
+
+				asrt.assertEquals(PdfAdvanceReceived,TransTotalAmount,1.0, "Mismatch in total amount in billing screen actual "+PdfAdvanceReceived+" and Expected "+TransTotalAmount+"in Normal Advance PDF");
+				asrt.assertEquals(PdfMaxGoldRate, PdfFixedGoldRate,1.0, "Mismatch in Fixed Gold Rate actual "+PdfMaxGoldRate+" and Expected "+PdfFixedGoldRate+" Max Gold Rate in Normal Advance PDF");
+				asrt.assertEquals(NormalSalesReturnUncutorPreciaTestData.TC34_DepositType, DepositType, "Mismatch in Deposit Type Actual "+NormalSalesReturnUncutorPreciaTestData.TC34_DepositType+" and Expected "+DepositType+ " in Normal Advance PDF");
+
+				Double WeightValue = PdfAdvanceReceived/PdfMaxGoldRate;
+				BigDecimal CalcWeightValue = new BigDecimal(WeightValue).setScale(3, RoundingMode.HALF_UP);
+				double ApproxWeightPdfValue = Double.parseDouble(ApproxWeight.replaceAll("[^\\d.]", "").trim());
+
+				asrt.assertEquals(ApproxWeightPdfValue, CalcWeightValue.doubleValue(),1.0, "Mismatch in Approx Weight Value Actual "+ApproxWeightPdfValue+" and Expected "+CalcWeightValue.doubleValue()+" Approx Weight in Normal Advance PDF");
+
+				pdfUtils.DeleteAllPDFFilesInInvoiceFolder();
+				base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Btn_Close("primaryButton","Close"));
+
+				//Step 21.In cash, click on ""Recall Estimate""
+				//Step 22.Select the estimate, Click on Recall Estimation
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Cash("tab-button-ButtonGrid2","text semilight primaryFontColor"));
+				base.buttonClick(LoginPageObj.Edt_AlertText("Recall Estimate"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				Thread.sleep(2000);
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+				Thread.sleep(2000);
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell",ActualEstmnNumber));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconGo"));
+				String ExpectedEstmnNumberSales= base.GetValue(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Estimation no"));
+
+				Assert.assertEquals(ActualEstmnNumber, ExpectedEstmnNumberSales,"Mismatch in Estimation number Actual is "+ActualEstmnNumber+" and Expected Estimation number"+ExpectedEstmnNumberSales+" in Recall Estimation page"); 
+
+				// Step 23:Select transaction type as ""Sales"" and click on Process estimation
+				base.buttonClick(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"));
+				base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"), NormalSalesReturnUncutorPreciaTestData.TC34_TransactionType2);
+
+				//Step 24: Choose a sales representative
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAccept"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Ele_SKUNumber("margin0 h5 ellipsis maxWidth220", "1"));
+
+				appUtils.HandleSpecifyRateModalInRecall();
+
+				Map<String, String> TransactionRecallDataLineRecall = appUtils.TransactionSKUsLinesVerify(SkuList, ScannedSkuDataMap);
+				String SubTotalRecall			 =   TransactionRecallDataLineRecall.get("Subtotal");
+				String DiscountRecall 			 =   TransactionRecallDataLineRecall.get("Discount");
+				String TotalGrossWeightRecall	 =   TransactionRecallDataLineRecall.get("GrossWeight");
+				String TotalNetWeightRecall 	 =   TransactionRecallDataLineRecall.get("NetWeight");
+				String TotalAmountRecall		 =   TransactionRecallDataLineRecall.get("TotalAmount");
+				String NetTotalRecall			 =   TransactionRecallDataLineRecall.get("NetTotal");
+				String LinesCountRecall			 =   TransactionRecallDataLineRecall.get("LinesCount");
+				String AdjustmentReturn			 =   TransactionRecallDataLineReturn.get("Payments");
+
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Close"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell", "Original For Recipient"));
+
+				// Step 25:  post sales return bill
+				// Expected Result: Check final invoice details * save receipt id for future reference
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("PRINT"));
+				Thread.sleep(3000);
+				String FinalInvoice   		     = pdfUtils.DownloadAndRenameLatestPDF("TC34SaleInvoice");
+				Thread.sleep(2000);
+				String SalesPdfPath  		     = System.getProperty("user.dir") + "\\Invoices\\" + FinalInvoice;
+				String GrossAmount    		     = SubTotalRecall;
+				String TotalDiscount  		     =DiscountRecall;
+				String TotalQtyPcs    		     =LinesCountRecall;
+				String TaxableValueSale		     =TotalAmountRecall;
+				String SanitizedNetTotalRecall   = NetTotalRecall.replaceAll("[^\\d.\\-]", "");
+				String SanitizedAdjustmentReturn = AdjustmentReturn.replaceAll("[^\\d.\\-]", "");
+				String NetValueSale              = String.format("%.2f", (Math.abs(Double.parseDouble(SanitizedNetTotalRecall)) + Math.abs(Double.parseDouble(SanitizedAdjustmentReturn))));
+				String TotalDiamond              ="";
+				String PaymentHDFCCard           ="";
+				double TotalNewNetWeightDouble   = Double.parseDouble(TotalNewNetWeight);
+				String TotalNetWt			     =TotalNetWeightRecall;
+				String TotalGrossWt			     =TotalGrossWeightRecall;
+				String Adjustment 			     = String.valueOf(Math.abs(Double.parseDouble(SanitizedAdjustmentReturn)));
+				String PdfInvoiceNo              = pdfUtils.SaleInvoicePdfAdjustmentValidation(
+						SalesPdfPath,
+						GrossAmount,
+						TotalDiscount,
+						TotalDiamond,
+						TotalQtyPcs,
+						TotalNetWt,
+						TotalGrossWt,
+						TaxableValueSale,
+						NetValueSale,
+						PaymentHDFCCard,
+						Adjustment,
+						SkuList,
+						ScannedSkuDataMap);
+				pdfUtils.DeleteAllPDFFilesInInvoiceFolder();
+			}
+			else if (NumericAmount > 0.00) {
+
+				// Step 12: Click on Save to estimation button in billing screen
+				// Step 13: Save Estimate
+				// Expected Result:Verify the invoice details
+				base.buttonClick(LoginPageObj.Edt_AlertText("Billing"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_abc("buttonsContainer positionRelative","Back" ));
+				base.buttonClick(LoginPageObj.Edt_AlertText("Save To Estimate"));
+				String ActualEstmnNumber = base.GetValue(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Estimation no"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAdd"));
+				// PDF Verification Step
+				Thread.sleep(3000);
+				String ProFormaInvoiceName = pdfUtils.DownloadAndRenameLatestPDF("TC34_ProformaInvoice");
+				Thread.sleep(2000);
+				String ProFormaInvoicePath = System.getProperty("user.dir") + "\\Invoices\\" + ProFormaInvoiceName;
+				String Gst                 = Tax;
+				String TaxableValue		   = SubTotal;
+				String InvoiceTotal        = TotalAmount;
+				String TotalAmnt           = SubTotal;
+				double TotalNetWeight      = Double.parseDouble(TotalNewNetWeight) - Double.parseDouble(TotalNetWeightReturn);
+				pdfUtils.ProFormaInvoicePdfWithOldGoldNegativeValue(
+						ProFormaInvoicePath,
+						TaxableValue,
+						Gst,
+						InvoiceTotal,
+						NetTotal,
+						TotalAmnt
+						);
+
+				// Step 14: Recall estimate from cashier screen
+				// Expected Result: Verify whether the recalled item is the same as the item in the cart.(Estimation No Check)
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Cash("tab-button-ButtonGrid2","text semilight primaryFontColor"));
+				base.buttonClick(LoginPageObj.Edt_AlertText("Recall Estimate"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				Thread.sleep(2000);
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+				Thread.sleep(2000);
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell",ActualEstmnNumber));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconGo"));
+				String ExpectedEstmnNumberSalesReturn= base.GetValue(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Estimation no"));
+
+				Assert.assertEquals(ActualEstmnNumber, ExpectedEstmnNumberSalesReturn,"Mismatch in Estimation number Actual is "+ActualEstmnNumber+" and Expected Estimation number"+ExpectedEstmnNumberSalesReturn+" in Recall Estimation page"); 
+
+				// Step 15: Select the Transaction Type as Sales Return
+				base.buttonClick(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"));
+				base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"), NormalSalesReturnUncutorPreciaTestData.TC34_TransactionType1);
+
+				// Step 16: Click on Process Estimation
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAccept"));
+
+				// Step 17: Select any Sales Representative
+				// Expected Result: Cashier Screen after recall*No of Product lines*Displayed Item Name*Displayed Quantity*Displayed TOTAL (without Tax)*Displayed Subtotal*TAX*Total Amount
+				base.setZoom(driver, 60);
+				Thread.sleep(3000);
+				Map<String, String> TransactionRecallDataLineReturn = appUtils.TransactionSKUsLinesVerify(SkuList, ScannedSkuDataMap);
+				String SubTotalReturn 			= TransactionRecallDataLineReturn.get("Subtotal");
+				String DiscountReturn 			= TransactionRecallDataLineReturn.get("Discount");
+				String TotalGrossWeightReturn   = TransactionRecallDataLineReturn.get("GrossWeight");
+				String TotalNewNetWeightReturn  = TransactionRecallDataLineReturn.get("NetWeight");
+				String TaxReturn 				= TransactionRecallDataLineReturn.get("Tax");
+				String TotalAmountReturn	    = TransactionRecallDataLineReturn.get("TotalAmount").replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim();
+				String NetTotalReturn 			= TransactionRecallDataLineReturn.get("NetTotal").replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim();
+				String LinesCountReturn 		= TransactionRecallDataLineReturn.get("LinesCount");
+
+				mathUtils.ValidateTransactionLineCalculation(TransactionRecallDataLineReturn, ScannedSkuDataMapSale);
+
+				// Step 18:  Click on the Amount
+				// Expected Result: Check Return Invoice details
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Close"));
+				pdfUtils.DownloadAndRenameLatestPDF("TC34SaleReturnInvoice");
+
+				Map<String, String> Result = pdfUtils.SalesReturnPDFCredit();
+				String ExpSerialNoReturnSale         = Result.get("SerialNo");
+				String ExpTotalProductsReturnSale    = Result.get("TotalProducts");
+				String ExpTotalQtyReturnSale         = Result.get("TotalQty");
+				String ExpGrossAmountReturnSale      = Result.get("GrossAmount");
+				String ExpTotalNetWtReturnSale       = Result.get("TotalNetWt");
+				String ExpTotalGrossWtReturnSale     = Result.get("TotalGrossWt");
+				String ExpTotalNetValueReturnSale    = Result.get("TotalNetValue");
+				String ExpTaxableValueReturnSale     = Result.get("TaxableValue");
+				String ExpAdjustmentReturnSale       = Result.get("PaymentDetails");
+				String ExpTotalValueReturnSale       = Result.get("TotalValue");
+				int TotalProductsSale = Integer.parseInt(Result.get("TotalProducts"));
+
+				// Loop through each SKU/Product
+				for (int i = 1; i <= TotalProductsSale; i++) {
+					String ExpectedGrossWt   		= Result.get("Product" + i + ".GrossWt");
+					String ExpectedStoneWt		    = Result.get("Product" + i + ".StoneWt");
+					String ExpectedNetWt 			= Result.get("Product" + i + ".NetWt");
+					String ExpectedAmount 			= Result.get("Product" + i + ".Amount");
+					String ActualGrossWt 			= SkuWiseData.getOrDefault("SKU_" + i + "_GrossWeight", "N/A");
+					String ActualStoneWt 			= SkuWiseData.getOrDefault("SKU_" + i + "_StoneWeight", "N/A");
+					String ActualNetWt 				= SkuWiseData.getOrDefault("SKU_" + i + "_NetWeight", "N/A");
+					String ActualAmount 			= SkuWiseData.getOrDefault("SKU_" + i + "_Total", "N/A");
+
+					Assert.assertEquals(ActualGrossWt, ExpectedGrossWt, "Mismatch in Gross Weight for SKU_" + i +"in PDF Sale Return Invoice details");
+					Assert.assertEquals(ActualStoneWt, ExpectedStoneWt, "Mismatch in Stone Weight for SKU_" + i+"in PDF Sale Return Invoice details");
+					Assert.assertEquals(ActualNetWt, ExpectedNetWt, "Mismatch in Net Weight for SKU_" + i+"in PDF Sale Return Invoice details");
+					Assert.assertEquals(ActualAmount, ExpectedAmount, "Mismatch in Total Amount for SKU_" + i+"in PDF Sale Return Invoice details");
+				}
+				double ActualTaxableValue 		= Math.abs(Double.parseDouble(((String) InvoiceDetails.get("SubTotal")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim()));
+				double ExpectedTaxableValue  	= Double.parseDouble(ExpTaxableValueReturnSale);
+
+				double ActualGrossAmount 		= Math.abs(Double.parseDouble(((String) InvoiceDetails.get("SubTotal")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim()));
+				double ExpectedGrossAmount 		= Double.parseDouble(ExpGrossAmountReturnSale);
+
+				double ActualTotalGrossWeight   = Math.abs(Double.parseDouble(((String) InvoiceDetails.get("TotalGrossWeight")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim()));
+				double ExpectedTotalGrossWeight = Double.parseDouble(ExpTotalGrossWtReturnSale);
+
+				double ActualNetWeight			= Double.parseDouble(((String) InvoiceDetails.get("TotalNetWeight")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim());
+				double ExpectedNetWeight 		= Double.parseDouble(ExpTotalNetWtReturnSale);
+
+				double ActualNetTotal 			= Double.parseDouble(((String) InvoiceDetails.get("NetTotal")).replaceAll("[\u20B9,=:]", "").replaceAll("\\s+", "").trim());
+				double ExpectedNetTotal 		= Double.parseDouble(ExpTotalNetValueReturnSale);
+
+				Assert.assertEquals(ActualTaxableValue, ExpectedTaxableValue,1, "Mismatch in Taxable Value Actual "+ActualTaxableValue+" and Expected Taxable Value "+ExpectedTaxableValue+"in PDF Sale Return Invoice details");
+				Assert.assertEquals(ActualGrossAmount, ExpectedGrossAmount,1, "Mismatch in Gross Amount Actual "+ActualGrossAmount+" and Expected Gross Amount "+ExpectedGrossAmount+"in PDF Sale Return Invoice details");
+				Assert.assertEquals(LinesCountReturn, ExpTotalQtyReturnSale, "Mismatch in No of Product Lines Actual "+LinesCountReturn+" and Expected No of Product Lines "+ExpTotalProductsReturnSale+"in PDF Sale Return Invoice details");
+				Assert.assertEquals(ActualNetWeight, ExpectedNetWeight,1, "Mismatch in Total Net Weight Actual "+ActualNetWeight+" and Expected Net Weight "+ExpectedNetWeight+"in PDF Sale Return Invoice details");
+				Assert.assertEquals(ActualTotalGrossWeight, ExpectedTotalGrossWeight,1, "Mismatch in Total Gross Weight Actual "+ActualTotalGrossWeight+" and Expected Total Gross Weight"+ExpectedTotalGrossWeight+"in PDF Sale Return Invoice details");
+				Assert.assertEquals(ActualNetTotal, ExpectedNetTotal,1, "Mismatch in Net Total Actual "+ActualNetTotal+" and Expected Net Total "+ExpectedNetTotal+"in PDF Sale Return Invoice details");
+
+				//Step 21.In cash, click on "Recall Estimate"
+				//Step 22.Select the estimate, Click on Recall Estimation
+				//Expected Result: Verify whether the recalled item is the same as the item in the cart.(Estimation No Check)
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Cash("tab-button-ButtonGrid2","text semilight primaryFontColor"));
+				base.buttonClick(LoginPageObj.Edt_AlertText("Recall Estimate"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				Thread.sleep(2000);
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+				Thread.sleep(2000);
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell",ActualEstmnNumber));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconGo"));
+				String ExpectedEstmnNumberSales= base.GetValue(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Estimation no"));
+
+				Assert.assertEquals(ActualEstmnNumber, ExpectedEstmnNumberSales,"Mismatch in Estimation number Actual is "+ActualEstmnNumber+" and Expected Estimation number"+ExpectedEstmnNumberSales+" in Recall Estimation page"); 
+
+				// Step 23:Select transaction type as ""Sales"" and click on Process estimation
+				base.buttonClick(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"));
+				base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"), "Sales");
+
+				//Step 24: Choose a sales representative
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAccept"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Ele_SKUNumber("margin0 h5 ellipsis maxWidth220", "1"));
+				appUtils.HandleSpecifyRateModalInRecall();
+
+				Map<String, String> TransactionRecallDataLineRecall = appUtils.TransactionSKUsLinesVerify(SkuList, ScannedSkuDataMap);
+				String SubTotalRecall			 =   TransactionRecallDataLineRecall.get("Subtotal");
+				String DiscountRecall 			 =   TransactionRecallDataLineRecall.get("Discount");
+				String TotalGrossWeightRecall	 =   TransactionRecallDataLineRecall.get("GrossWeight");
+				String TotalNetWeightRecall 	 =   TransactionRecallDataLineRecall.get("NetWeight");
+				String TotalAmountRecall		 =   TransactionRecallDataLineRecall.get("TotalAmount");
+				String NetTotalRecall			 =   TransactionRecallDataLineRecall.get("NetTotal");
+				String LinesCountRecall			 =   TransactionRecallDataLineRecall.get("LinesCount");
+				String AdjustmentReturn			 =   TransactionRecallDataLineReturn.get("Payments");
+
+				//Step 25:Click on the Amount For printing Receipt
+				//Expected Result: Check final invoice details * save receipt id for future reference
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+
+				base.buttonClick(LoginPageObj.Edt_AlertText("HDFC (Credit Card)"));
+				String PaymentHDFCCard = base.GetAttribte(NormalSaleGoldAndSilverObj.Edt_ApprCode("numpad-control-input primaryFontColor numpad-control-input-readonly"),"value");
+				base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_CartMoney("flexGrow50 flexRow row-enter","h1 marginBottom0 iconReturnKey button-content-return"));
+				base.setData(NormalSaleGoldAndSilverObj.Edt_ApprCode("textInputArea"),NormalSalesReturnUncutorPreciaTestData.TC37_ApprovalCode);
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("OK"));
+				base.setData(NormalSaleGoldAndSilverObj.Edt_ApprCode("textInputArea"),NormalSalesReturnUncutorPreciaTestData.TC37_ApprovalCode);
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("OK"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Close"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell", "Original For Recipient"));
+
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("PRINT"));
+				Thread.sleep(3000);
+				String FinalInvoice   		     = pdfUtils.DownloadAndRenameLatestPDF("TC34SaleInvoice");
+				Thread.sleep(2000);
+				String SalesPdfPath  		     = System.getProperty("user.dir") + "\\Invoices\\" + FinalInvoice;
+				String GrossAmount    		     = SubTotalRecall;
+				String TotalDiscount  		     =DiscountRecall;
+				String TotalQtyPcs    		     =LinesCountRecall;
+				String TaxableValueSale		     =TotalAmountRecall;
+				String SanitizedNetTotalRecall   = NetTotalRecall.replaceAll("[^\\d.\\-]", "");
+				String SanitizedAdjustmentReturn = AdjustmentReturn.replaceAll("[^\\d.\\-]", "");
+				String NetValueSale              = String.format("%.2f", (Math.abs(Double.parseDouble(SanitizedNetTotalRecall)) + Math.abs(Double.parseDouble(SanitizedAdjustmentReturn))));
+				String TotalDiamond              ="";
+				String PaymentAmountHDFC         =PaymentHDFCCard;
+				double TotalNewNetWeightDouble   = Double.parseDouble(TotalNewNetWeight);
+				String TotalNetWt			     =TotalNetWeightRecall;
+				String TotalGrossWt			     =TotalGrossWeightRecall;
+				String Adjustment 			     = String.valueOf(Math.abs(Double.parseDouble(SanitizedAdjustmentReturn)));
+				String PdfInvoiceNo              = pdfUtils.SaleInvoicePdfAdjustmentValidation(
+						SalesPdfPath,
+						GrossAmount,
+						TotalDiscount,
+						TotalDiamond,
+						TotalQtyPcs,
+						TotalNetWt,
+						TotalGrossWt,
+						TaxableValueSale,
+						NetValueSale,
+						PaymentAmountHDFC,
+						Adjustment,
+						SkuList,
+						ScannedSkuDataMap);
+				pdfUtils.DeleteAllPDFFilesInInvoiceFolder();
+			}
+		}
+	}
+	
+	// <summary>
+		// Test Case Title : Sales return with OU and a sale
+		// Automation ID : TC38
+		// Author: Gokul.P
+		// </summary>
+		public void TC38_NormalSalesReturnUncutorPrecia() throws Exception {
+			//Step 1: Login to POS
+			//Step 2: Click on Transaction button
+			Map<String, Object> InvoiceDetails = erpUtils.GetInvoiceDetailsAfterNormalSale(NormalSalesReturnUncutorPreciaTestData.TC38_CustomerNo, NormalSalesReturnUncutorPreciaTestData.TC38_Products);
+			String ActualCustomerName = pdfUtils.ExtractCustomerNameFromSaleInvoice();
+
+			String InvoiceNo            = (String) InvoiceDetails.get("InvoiceNo");
+			String TotalNetWeightReturn = (String) InvoiceDetails.get("TotalNetWeight");
+			String SkuPurityReturn      = (String) InvoiceDetails.get("FirstSkuPurity");
+			String SkuGoldRateReturn    = (String) InvoiceDetails.get("FirstSkuGoldRate");
+			String TotalRgWeightReturn  = (String) InvoiceDetails.get("TotalRgWeight");
+
+			// Extract SKU-wise map
+			Map<String, String> SkuWiseData = (Map<String, String>) InvoiceDetails.get("SKUWiseDetails");
+
+			//  Print only SKU_1_NetWeight and SKU_1_GrossWeight
+			String Sku1NetWeight   = SkuWiseData.getOrDefault("SKU_1_NetWeight", "N/A");
+			String Sku1GrossWeight = SkuWiseData.getOrDefault("SKU_1_GrossWeight", "N/A");
+			String Sku1StoneWeight = SkuWiseData.getOrDefault("SKU_1_StoneWeight", "N/A");
+			String Sku1Total	   = SkuWiseData.getOrDefault("SKU_1_Total", "N/A");
+			Map<String, String> ScannedSkuDataMapSale = (Map<String, String>) InvoiceDetails.get("ScannedSKUDataMap");
+
+			String ErpGoldRateFor24K= erpUtils.SetMetalRateInERP(SkuGoldRateReturn, SkuPurityReturn);
+			Thread.sleep(120000); //Wait needed for ERP Gold Rate to Change
+
+			//Step 3: Select customer
+			//Step 4: Click on add to estimation button
+			appUtils.SearchByCustomerID(NormalSalesReturnUncutorPreciaTestData.TC38_CustomerNo, UtilityTestData.MenuBarOptions[5]);
+
+			//Step 5: Click on customer adjustment button
+			//Step 6: Click on return transaction button at the billing screen
+			//Step 7: Enter receipt number
+			//Step 8: Select return product and click on return button
+			//Expected: The product meant to be returned should be previously bought by the same customer.
+			ReturnDetails Details = appUtils.ReturnMultipleProductsWithDetails(InvoiceNo, NormalSalesReturnUncutorPreciaTestData.TC38_ProductsToReturn);
+			asrt.assertEquals(NormalSalesReturnUncutorPreciaTestData.TC38_CustomerName,ActualCustomerName,"Customer name for sale is not the same as the customer name from return. " +"ExpectedCustomerNameFrom MethodInvoicePdf: " + ActualCustomerName + ", but found: " + NormalSalesReturnUncutorPreciaTestData.TC38_CustomerName);
+
+			List<String> ReturnProductNames        = Details.productNames;
+			List<String> ReturnProductQtyList      = Details.productQty;
+			List<String> ReturnProductTotalList    = Details.productPrice;
+
+			//Step 9: Scan sku		
+			//Step 10: Click on add to cart button
+			// 11. Choose a sales representative
+			//Expected: Check calculation and No of Product lines,Displayed Item Name,Displayed Quantity,Displayed TOTAL (without Tax),Displayed Subtotal,TAX and Total Amount
+			List<String> SaleProductNames         = new ArrayList<>();
+			List<String> SaleProductQtyList       = new ArrayList<>();
+			List<String> SaleProductTotalList     = new ArrayList<>();
+			Map<String, String> ScannedSkuDataMap = new LinkedHashMap<>();
+			int SkuCounter = 1;
+
+			List<String> SkuList = appUtils.SelectMultipleSKUs(
+					NormalSalesReturnUncutorPreciaTestData.TC38_SaleProductCount,
+					NormalSalesReturnUncutorPreciaTestData.TC38_TransferType,
+					NormalSalesReturnUncutorPreciaTestData.TC38_FromCounter,
+					NormalSalesReturnUncutorPreciaTestData.TC38_MetalType);
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton expandedNavButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h5 textLeft centerY", "Transaction")); // go to Transaction
+
+			String ErpGoldRate24k = ErpGoldRateFor24K;
+			erpUtils.ResetRemainingReturnWeight();
+			for (String Sku : SkuList) {
+				appUtils.SKUIngridentTableValues(Sku, SkuCounter, ScannedSkuDataMap);
+				Map<String, String> currentSkuData = appUtils.ExtractDataForSku(ScannedSkuDataMap, SkuCounter);
+				SaleProductNames.add(ScannedSkuDataMap.get("SKU_" + SkuCounter + "_HeaderName"));
+				SaleProductQtyList.add(ScannedSkuDataMap.get("SKU_" + SkuCounter + "_GrossWeight"));
+				SaleProductTotalList.add(ScannedSkuDataMap.get("SKU_" + SkuCounter + "_Total"));
+				erpUtils.ErpSkuIngredientItemCalculation(currentSkuData, SkuCounter,TotalRgWeightReturn,SkuPurityReturn,SkuGoldRateReturn,ErpGoldRate24k);
+				SkuCounter++;
+			}
+			//TranscationPageVerifyLines
+			Map<String, String> TransactionDataLine = appUtils.TransactionSKUsLinesVerify(SkuList, ScannedSkuDataMap);
+			String SubTotal		 		  = TransactionDataLine.get("Subtotal");
+			String Discount 			  = TransactionDataLine.get("Discount");
+			String TotalGrossWeight 	  = TransactionDataLine.get("GrossWeight");
+			String TotalNetWeight   	  = TransactionDataLine.get("NetWeight");
+			String Tax 					  = TransactionDataLine.get("Tax");
+			String TotalAmount 			  = TransactionDataLine.get("TotalAmount");
+			String ActualLinesCount		  = TransactionDataLine.get("LinesCount");
+			List<String> ProductNames     = new ArrayList<>();
+			List<String> ProductQtyList   = new ArrayList<>();
+			List<String> ProductTotalList = new ArrayList<>();
+			ProductNames.addAll(ReturnProductNames);
+			ProductNames.addAll(SaleProductNames);
+			ProductQtyList.addAll(ReturnProductQtyList);
+			ProductQtyList.addAll(SaleProductQtyList);
+			ProductTotalList.addAll(ReturnProductTotalList); 
+			ProductTotalList.addAll(SaleProductTotalList);
+
+			List<WebElement> AllProductRows = base.GetElement(LoginPageObj.Ele_ErrorMessage("listViewLine expandable"));
+			String ExpectedLinesCount       = Integer.toString(AllProductRows.size());
+
+			asrt.assertEquals(ExpectedLinesCount, ActualLinesCount,"Lines count mismatch: Expected is "+ExpectedLinesCount+" but found "+ActualLinesCount+" in billing page");		
+
+			double SubTotalSum = 0.00;
+			for(int i =0; i < AllProductRows.size() ;i++) {
+				List<WebElement> ItemName         = base.GetElement(LoginPageObj.Ele_ErrorMessage("tillLayout-ProductNameField wrapText"));
+				String ActualItemNameInBillingPge = ItemName.get(i).getText();
+				if (i==1) {
+					String ExpectedItemNameInBillingPge = ProductNames.get(i).substring(ProductNames.get(i).indexOf("-") + 1).trim();
+					asrt.assertEquals(ExpectedItemNameInBillingPge, ActualItemNameInBillingPge,"Item name mismatch: Expected is "+ExpectedItemNameInBillingPge+" but got "+ActualItemNameInBillingPge+" in billing page");			
+				}
+				else {
+					String ExpectedItemNameInBillingPge = ProductNames.get(i).trim();
+					asrt.assertEquals(ExpectedItemNameInBillingPge, ActualItemNameInBillingPge,"Item name mismatch: Expected is "+ExpectedItemNameInBillingPge+" but got "+ActualItemNameInBillingPge+" in billing page");
+				}
+				List<WebElement> Quantity           = base.GetElement(NormalSaleGoldAndSilverObj.Btn_CartMoney("tillLayout-QuantityField textRight","h5"));
+				String ActualQuantityInBillingPge   = Quantity.get(i).getText().replace("-", "");
+				String ExpectedQuantityInBillingPge = ProductQtyList.get(i);
+				double ActualQtyInBillingPge        = Double.parseDouble(ActualQuantityInBillingPge);
+				double ExpectedQtyInBillingPge      = Double.parseDouble(ExpectedQuantityInBillingPge);
+				asrt.assertEquals(ExpectedQtyInBillingPge, ActualQtyInBillingPge,1.0,"Quantity mismatch: Expected is "+ExpectedQtyInBillingPge+" but got "+ActualQtyInBillingPge+" in billing page");
+
+				List<WebElement> TotalWithoutTax           = base.GetElement(NormalSaleGoldAndSilverObj.Btn_CartMoney("tillLayout-TotalWithoutTaxField textRight","h5"));
+				String ActualTotalWithoutTaxInBillingPge   = TotalWithoutTax.get(i).getText().replace("₹", "").replace(",", "").trim();
+				SubTotalSum                                = SubTotalSum+Double.parseDouble(ActualTotalWithoutTaxInBillingPge);
+				String ExpectedTotalWithoutTaxInBillingPge = String.format("%.2f", Double.parseDouble(ProductTotalList.get(i).replace("₹", "").replace(",", "").trim()));
+				asrt.assertEquals(ExpectedTotalWithoutTaxInBillingPge, ActualTotalWithoutTaxInBillingPge.replace("-", ""),"TotalWithoutTax mismatch: Expected is "+ExpectedTotalWithoutTaxInBillingPge+" but got "+ActualTotalWithoutTaxInBillingPge+" in billing page");
+			}
+			String ExpectedSubTotalInBillingPge = String.format("%.2f",SubTotalSum);
+			String ActualSubTotalInBillingPge   = base.GetText(NormalSaleGoldAndSilverObj.Ele_Lines("SubtotalField", "h4")).replace("₹", "").replace(",", "").trim();
+			asrt.assertEquals(ExpectedSubTotalInBillingPge, ActualSubTotalInBillingPge,"Subtotal mismatch: "+ExpectedSubTotalInBillingPge+" but found "+ActualSubTotalInBillingPge+" in billing page");
+
+			String ActualTaxInBillingPge   = Tax.replace("₹", "").replace(",", "").trim();
+			double ActualTax               = Double.parseDouble(ActualTaxInBillingPge);
+			double ExpectedTax             = SubTotalSum*0.03;
+			String ExpectedTaxInBillingPge = String.format("%.2f",ExpectedTax);
+			asrt.assertEquals(ExpectedTax, ActualTax,1.0,"Tax amount mismatch: "+ExpectedTax+" but found "+ActualTax+" in billing page");
+
+			double ExpectedTotalAmountInBillingPge = Double.parseDouble(ActualSubTotalInBillingPge)+Double.parseDouble(ActualTaxInBillingPge);
+			double ActualTotalAmountInBillingPge   = Double.parseDouble(TotalAmount.replace("₹", "").replace(",", "").trim());
+			asrt.assertEquals(ExpectedTotalAmountInBillingPge, ActualTotalAmountInBillingPge,1.0,"Total Amount mismatch: "+ExpectedTotalAmountInBillingPge+" but found "+ActualTotalAmountInBillingPge+" in billing page");
+
+
+			// 12.Search "OU"
+			base.buttonClick(NormalSaleGoldAndSilverObj.Edt_Name("Search"));
+			base.setData(NormalSaleGoldAndSilverObj.Edt_Name("Search"),NormalSalesReturnUncutorPreciaTestData.TC38_OldProduct);
+			base.buttonClick(NormalSaleGoldAndSilverObj.Ele_SearchList("Products"));
+			Thread.sleep(2000);
+
+			// 13.Select "Old Uncut Own"
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_OP("dataListLine",UtilityTestData.OldUncutOwnProduct));	
+
+			//14.Select Configuration as "22k"
+			base.buttonClick(NormalSaleGoldAndSilverObj.Sel_Configuration("col grow"));
+			base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_Configuration("col grow"),NormalSalesReturnUncutorPreciaTestData.TC38_Configuration);
+
+			//16.Select QC person and Smith person
+			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+			base.buttonClick(LoginPageObj.Btn_SignInButton("Add item"));		
+			Thread.sleep(1000);
+			base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("qcInput"),NormalSalesReturnUncutorPreciaTestData.TC38_QcAndSmithPerson);		
+			base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("smInput"),NormalSalesReturnUncutorPreciaTestData.TC38_QcAndSmithPerson);
+
+			//17.Enter Pieces and Gross weight 
+			base.clearData(NormalSaleGoldAndSilverObj.Ele_Name("piecesogp"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_Name("piecesogp"), NormalSalesReturnUncutorPreciaTestData.TC38_Pieces);	
+			base.clearData(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightogp"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightogp"), NormalSalesReturnUncutorPreciaTestData.TC38_GrossWeight);
+
+			//18. Enter stone pieces, weight & rate
+			//19.Click on Calculate	
+			// [Check the displayed values]
+			//Expected:Check Exchange rate(Board rate)
+			//Check calculation: Note:Billing Screen,No of Product lines,Displayed Item Name,Displayed Quantity,
+			//Displayed TOTAL (without Tax),Displayed Subtotal,TAX,	Total Amount
+			base.clearData(NormalSaleGoldAndSilverObj.Ele_Name("ogpstonepcs"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_Name("ogpstonepcs"),NormalSalesReturnUncutorPreciaTestData.TC38_StonePieces);
+			// Step for Bug: 'Unexpected Error' Pop up displayed in the Old Gold Details
+			// page
+			if (base.isElementPresent(driver,By.cssSelector("button[data-ax-bubble='messageDialog_TemplatedDialogButton1'].primaryButton"))) {
+				try {
+					driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+					base.excuteJsClick(	By.cssSelector("button[data-ax-bubble='messageDialog_TemplatedDialogButton1'].primaryButton"));
+					System.out.println("Popup appeared and OK button was clicked.");
+					driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+				} catch (Exception e) {System.out.println("Failed to click the OK button: " + e.getMessage());}
+			} else {System.out.println("Popup not found, skipping the close button action.");}
+
+			base.clearData(NormalSaleGoldAndSilverObj.Ele_Name("ogpstonewt"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_Name("ogpstonewt"),NormalSalesReturnUncutorPreciaTestData.TC38_StoneWeight);
+			base.clearData(NormalSaleGoldAndSilverObj.Ele_Name("ogpstonerate"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_Name("ogpstonerate"),NormalSalesReturnUncutorPreciaTestData.TC38_StoneRate);
+			base.scrollToElementtoCenter(NormalSaleGoldAndSilverObj.Btn_Deposit("Calculate"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Calculate"));
+			Thread.sleep(4000);
+			double ActualCurrentGoldRate22kInItemDetailsPge = Double.parseDouble(base.GetValue(NormalSaleGoldAndSilverObj.Ele_Name("ogpnetrate")));
+			double CurrentERPGoldRate24k                    = Double.parseDouble(ErpGoldRateFor24K);
+			double ExpectedCurrentGoldRate22kFromERP        = (CurrentERPGoldRate24k*22)/24;
+
+			asrt.assertEquals(ActualCurrentGoldRate22kInItemDetailsPge, ExpectedCurrentGoldRate22kFromERP,1.0,"Gold Rate mismatch: Expected is "+ExpectedCurrentGoldRate22kFromERP+" but found "+ActualCurrentGoldRate22kInItemDetailsPge+"in item details page");
+
+			String ExpectedNetWeightInItemDetailsPge  = base.GetValue(NormalSaleGoldAndSilverObj.Ele_Name("ogpnetwt"));		
+			double NetWeightInItemDetailsPge          = Double.parseDouble(ExpectedNetWeightInItemDetailsPge);
+			double ExpectedGoldAmountInItemDetailsPge = Math.round(NetWeightInItemDetailsPge * ActualCurrentGoldRate22kInItemDetailsPge * 100.0) / 100.0;
+			String GoldAmountInItemDetailsPge         = base.GetValue(NormalSaleGoldAndSilverObj.Ele_Name("ogpnetamt"));
+			double ActualGoldAmountInItemDetailsPge   = Double.parseDouble(GoldAmountInItemDetailsPge);
+			asrt.assertEquals(ActualGoldAmountInItemDetailsPge, ExpectedGoldAmountInItemDetailsPge,1.0,"GoldAmount mismatch: "+ExpectedGoldAmountInItemDetailsPge+" but got "+ActualGoldAmountInItemDetailsPge+" in item details page");
+
+			double AmountStone                         = Double.parseDouble(NormalSalesReturnUncutorPreciaTestData.TC38_StoneWeight)*Double.parseDouble(NormalSalesReturnUncutorPreciaTestData.TC38_StoneRate);
+			String ExpectedGrossWeightInItemDetailsPge = base.GetValue(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightogp"));
+			String TotalAmountInItemDetailsPge         = base.GetValue(NormalSaleGoldAndSilverObj.Ele_Name("ogptotalamt"));
+			double ActualTotalAmountInItemDetailsPge   = Double.parseDouble(TotalAmountInItemDetailsPge);
+			double ExpectedTotalAmountInItemDetailsPge = ActualGoldAmountInItemDetailsPge+AmountStone;
+			asrt.assertEquals(ActualTotalAmountInItemDetailsPge,ExpectedTotalAmountInItemDetailsPge,1.0, "Total amount mismatch: Expected is "+ExpectedTotalAmountInItemDetailsPge+" but got "+ActualTotalAmountInItemDetailsPge+" in item details page");
+
+			List<String> ExpectedNetWtOU             = base.GetElementTexts(NormalSaleGoldAndSilverObj.Btn_CartMoney("column3 textRight", "h4 ellipsis cell"));
+			String ExpectedGrossWtOU                 = base.GetValue(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightogp"));
+			List<String> ActualOURateInItemDetailPge = base.GetElementTexts(NormalSaleGoldAndSilverObj.Btn_CartMoney("column4 textRight", "h4 ellipsis cell"));
+
+			//Step 20: Click on Add to cart
+			base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+			base.buttonClick(LoginPageObj.Edt_Alert("Add to Cart"));
+			if(base.isExists(NormalSaleGoldAndSilverObj.Ele_Payement("Cart has changed"))) {
+				base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+			}
+
+			//Step 21:Click on Save to Estimate button in billing screen and click on Save estimation
+			//Expected: Verify the estimate invoice
+
+			Map<String, String> TransactionDataLineRecall = appUtils.TransactionSKUsLinesVerify(SkuList, ScannedSkuDataMap);
+			String SubTotalAfterOU		 		  = TransactionDataLineRecall.get("Subtotal");
+			String DiscountAfterOU 			      = TransactionDataLineRecall.get("Discount");
+			String TotalGrossWeightAfterOU 	      = TransactionDataLineRecall.get("GrossWeight");
+			String TotalNetWeightAfterOU   	      = TransactionDataLineRecall.get("NetWeight");
+			String TaxAfterOU 					  = TransactionDataLineRecall.get("Tax");
+			String TotalAmountAfterOU 			  = TransactionDataLineRecall.get("TotalAmount");
+			String ActualLinesCountAfterOU		  = TransactionDataLineRecall.get("LinesCount");
+			ProductNames.add(NormalSalesReturnUncutorPreciaTestData.TC38_OldProduct);			
+			ProductQtyList.add(ExpectedGrossWtOU);			
+			ProductTotalList.add(TotalAmountInItemDetailsPge);
+
+			List<WebElement> AllProductRowsAfterOU = base.GetElement(LoginPageObj.Ele_ErrorMessage("listViewLine expandable"));
+			String ExpectedLinesCountAfterOu       = Integer.toString(AllProductRowsAfterOU.size());
+
+			asrt.assertEquals(ActualLinesCountAfterOU,ExpectedLinesCountAfterOu,"Lines count mismatch: Expected is "+ExpectedLinesCount+" but found "+ActualLinesCount+" in billing page");	
+
+
+			double SubTotalSumAfterOu = 0.00;
+			for(int i =0; i < AllProductRowsAfterOU.size() ;i++) {
+				List<WebElement> ItemName         = base.GetElement(LoginPageObj.Ele_ErrorMessage("tillLayout-ProductNameField wrapText"));
+				String ActualItemNameInBillingPge = ItemName.get(i).getText();
+				if (i==1) {
+					String ExpectedItemNameInBillingPge = ProductNames.get(i).substring(ProductNames.get(i).indexOf("-") + 1).trim();
+					asrt.assertEquals(ExpectedItemNameInBillingPge, ActualItemNameInBillingPge,"Item name mismatch: Expected is "+ExpectedItemNameInBillingPge+" but got "+ActualItemNameInBillingPge+" in billing page");			
+				}
+				else {
+					String ExpectedItemNameInBillingPge = ProductNames.get(i).trim();
+					asrt.assertEquals(ExpectedItemNameInBillingPge, ActualItemNameInBillingPge,"Item name mismatch: Expected is "+ExpectedItemNameInBillingPge+" but got "+ActualItemNameInBillingPge+" in billing page");
+				}
+
+
+				List<WebElement> Quantity           = base.GetElement(NormalSaleGoldAndSilverObj.Btn_CartMoney("tillLayout-QuantityField textRight","h5"));
+				String ActualQuantityInBillingPge   = Quantity.get(i).getText().replace("-", "");
+				String ExpectedQuantityInBillingPge = ProductQtyList.get(i);
+				double ActualQtyInBillingPge        = Double.parseDouble(ActualQuantityInBillingPge);
+				double ExpectedQtyInBillingPge      = Double.parseDouble(ExpectedQuantityInBillingPge);
+				asrt.assertEquals(ExpectedQtyInBillingPge, ActualQtyInBillingPge,1.0,"Quantity mismatch: Expected is "+ExpectedQtyInBillingPge+" but got "+ActualQtyInBillingPge+" in billing page");
+				List<WebElement> TotalWithoutTax           = base.GetElement(NormalSaleGoldAndSilverObj.Btn_CartMoney("tillLayout-TotalWithoutTaxField textRight","h5"));
+				String ActualTotalWithoutTaxInBillingPge   = TotalWithoutTax.get(i).getText().replace("₹", "").replace(",", "").trim();
+				SubTotalSumAfterOu                                = SubTotalSumAfterOu+Double.parseDouble(ActualTotalWithoutTaxInBillingPge);
+				String ExpectedTotalWithoutTaxInBillingPge = String.format("%.2f", Double.parseDouble(ProductTotalList.get(i).replace("₹", "").replace(",", "").trim()));
+				asrt.assertEquals(ExpectedTotalWithoutTaxInBillingPge, ActualTotalWithoutTaxInBillingPge.replace("-", ""),"TotalWithoutTax mismatch: Expected is "+ExpectedTotalWithoutTaxInBillingPge+" but got "+ActualTotalWithoutTaxInBillingPge+" in billing page");
+			}
+
+			String ExpectedSubTotalAFterOUInBillingPge = String.format("%.2f",SubTotalSumAfterOu);
+			String ActualSubTotalAfterOUInBillingPge   = base.GetText(NormalSaleGoldAndSilverObj.Ele_Lines("SubtotalField", "h4")).replace("₹", "").replace(",", "").trim();
+			asrt.assertEquals(ActualSubTotalAfterOUInBillingPge, ExpectedSubTotalAFterOUInBillingPge,"Subtotal mismatch: "+ExpectedSubTotalInBillingPge+" but found "+ActualSubTotalInBillingPge+" in billing page");
+
+			String ActualTaxAfterOuInBillingPge   = Tax.replace("₹", "").replace(",", "").trim();
+			double ActualTaxAfterOu               = Double.parseDouble(ActualTaxAfterOuInBillingPge);
+
+
+			double ExpectedTaxAfterOu             = ExpectedTax;
+
+			asrt.assertEquals(ActualTaxAfterOu,ExpectedTaxAfterOu,1.0,"Tax amount mismatch: "+ExpectedTaxAfterOu+" but found "+ActualTaxAfterOu+" in billing page");
+
+			double ExpectedTotalAmountAfterOUInBillingPge = Double.parseDouble(ActualSubTotalAfterOUInBillingPge)+Double.parseDouble(ActualTaxAfterOuInBillingPge);
+			double ActualTotalAmountAfterOuInBillingPge   = Double.parseDouble(TotalAmountAfterOU.replace("₹", "").replace(",", "").trim());
+			asrt.assertEquals(ActualTotalAmountAfterOuInBillingPge, ExpectedTotalAmountAfterOUInBillingPge,1.0,"Total Amount mismatch: "+ExpectedTotalAmountInBillingPge+" but found "+ActualTotalAmountInBillingPge+" in billing page");
+
+			base.buttonClick(LoginPageObj.Edt_AlertText("Billing"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_abc("buttonsContainer positionRelative","Back" ));
+			base.buttonClick(LoginPageObj.Edt_AlertText("Save To Estimate"));
+			String ActualEstmnNumber = base.GetValue(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Estimation no"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAdd"));
+			Thread.sleep(3000);
+			double SubTotalInBillingPge = Double.parseDouble(ActualSubTotalInBillingPge)-ActualTotalAmountInItemDetailsPge;
+			String ProFormaInvoiceName  = pdfUtils.DownloadAndRenameLatestPDF("TC38_ProformaInvoice");
+			Thread.sleep(2000);
+			String ProFormaInvoicePath = System.getProperty("user.dir") + "\\Invoices\\" + ProFormaInvoiceName;
+			String Gst                 = ActualTaxInBillingPge.replace("-", "");
+			String TaxableValue		   = ActualSubTotalInBillingPge.replace("-", "");
+			String InvoiceTotal        = String.format("%.2f",SubTotalInBillingPge+ActualTax).replace("-", "");
+			String TotalAmnt           = String.format("%.2f",SubTotalInBillingPge+ActualTax).replace("-", "");
+			String NetTotal            = String.format("%.2f",SubTotalInBillingPge+ActualTax).replace("-", "");
+			pdfUtils.ProFormaInvoicePdfWithOldGoldNegativeValue(
+					ProFormaInvoicePath,
+					TaxableValue,
+					Gst,
+					InvoiceTotal,
+					NetTotal,
+					TotalAmnt
+					);
+
+			//Step 22:Recall estimate from cashier screen
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Cash("tab-button-ButtonGrid2","text semilight primaryFontColor"));
+			base.buttonClick(LoginPageObj.Edt_AlertText("Recall Estimate"));
+
+			//Step 23: Select estimate and click on Recall estimation button
+			base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);			
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell",ActualEstmnNumber));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconGo"));
+			String ExpectedEstmnNumber= base.GetValue(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Estimation no"));
+			Assert.assertEquals(ActualEstmnNumber, ExpectedEstmnNumber,"Mismatch in Estimation number Actual is "+ActualEstmnNumber+" and Expected Estimation number"+ExpectedEstmnNumber+" in Recall Estimate Page"); 
+
+			//Step 24:Select the Transaction Type as Sales return
+			base.buttonClick(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"));
+			base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"), NormalSalesReturnUncutorPreciaTestData.TC38_TransactionTypeReturn);
+
+			//Step 25:Click on Process Estimation 
+			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAccept"));
+
+			//Step 26:Click on the amount and post sale return 
+			//Expected: Check sales return invoice details
+			Thread.sleep(3000);
+			Map<String, String> TransactionRecallDataLineReturn = appUtils.TransactionSKUsLinesVerify(SkuList, ScannedSkuDataMap);
+			String SubTotalReturn 			= TransactionRecallDataLineReturn.get("Subtotal");
+			String DiscountReturn 			= TransactionRecallDataLineReturn.get("Discount");
+			String TotalGrossWeightReturn   = TransactionRecallDataLineReturn.get("GrossWeight");
+			String TotalNewNetWeightReturn  = TransactionRecallDataLineReturn.get("NetWeight");
+			String TaxReturn 				= TransactionRecallDataLineReturn.get("Tax");
+			String TotalAmountReturn	    = TransactionRecallDataLineReturn.get("TotalAmount").replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim();
+			String NetTotalReturn 			= TransactionRecallDataLineReturn.get("NetTotal").replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim();
+			String LinesCountReturn 		= TransactionRecallDataLineReturn.get("LinesCount");
+
+
+			String AmountDueForSaleReturnFromBillingPge    = base.GetText(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink")).replace("₹", "").replace(",", "").trim();
+			double AmountDueForSaleReturnInFromBillingPge  = Double.parseDouble(AmountDueForSaleReturnFromBillingPge);
+			String ExpectedAmountForSaleReturnInBillingPge = base.GetText(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink")).replace("-", "").replace("₹", "").replace(",", "").trim();
+			double TaxForSaleReturnProducts                = Double.parseDouble(base.GetText(NormalSaleGoldAndSilverObj.Ele_Lines("TaxField", "h4")).replace("₹", "").replace(",", "").replace("-", ""));
+			if (AmountDueForSaleReturnInFromBillingPge<0.00) {
+				appUtils.PaymentModeForDiffTransactions(UtilityTestData.PaymentMode, "", "",
+						UtilityTestData.SalePersonNumber,
+						UtilityTestData.SalePersonName,
+						UtilityTestData.DueYear,
+						UtilityTestData.NomineeName,
+						UtilityTestData.NomineeRelation);
+				base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+				base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell", "NORMAL ADV. INVOICE"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("PRINT"));
+				Map<String, String> AdvanceReceiptVoucherDetails = pdfUtils.NormalAdvancePdfValidation();
+				String ActualAdvanceReceived   = AdvanceReceiptVoucherDetails.get("AdvanceReceived");
+				String ActualNetReceived       = AdvanceReceiptVoucherDetails.get("NetAdvance");
+				String ActualPaymentMode       = AdvanceReceiptVoucherDetails.get("PaymentMode");
+				String PaymentAmount           = AdvanceReceiptVoucherDetails.get("PaymentAmount");
+				String ApproxWeight            = AdvanceReceiptVoucherDetails.get("ApproxWeight");
+				String ActualFixedGoldRate     = AdvanceReceiptVoucherDetails.get("FixedGoldRate");
+				String ActualDepositType       = AdvanceReceiptVoucherDetails.get("DepositType");
+				asrt.assertEquals(ExpectedAmountForSaleReturnInBillingPge, ActualAdvanceReceived,"Advance value mismatch: Expected is "+ExpectedAmountForSaleReturnInBillingPge+" but found "+ActualAdvanceReceived+" in Advance receipt");
+				asrt.assertEquals(ExpectedAmountForSaleReturnInBillingPge, ActualNetReceived,"Net value mismatch: Expected is "+ExpectedAmountForSaleReturnInBillingPge+" but found "+ActualNetReceived+" in Advance receipt");
+				asrt.assertEquals(NormalSalesReturnUncutorPreciaTestData.TC38_PaymentMode, ActualPaymentMode,"Payment mode mismatch: Expected is "+NormalSalesReturnUncutorPreciaTestData.TC38_PaymentMode+" but found "+ActualPaymentMode+" in Advance receipt");
+				asrt.assertEquals(ExpectedAmountForSaleReturnInBillingPge, PaymentAmount,"Payment Amount mismatch: Expected is "+ExpectedAmountForSaleReturnInBillingPge+" but found "+PaymentAmount+" in Advance receipt");
+				base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+			}
+			else {
+				base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+				base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+				Map<String, String> CreditNoteDetails = pdfUtils.SalesReturnPDFCredit();
+				String ActualGrossWt1                 = CreditNoteDetails.get("Product1.GrossWt");
+				String ActualStoneWt1                 = CreditNoteDetails.get("Product1.StoneWt");
+				String ActualNetWt1                   = CreditNoteDetails.get("Product1.NetWt");
+				String ActualAmount1                  = CreditNoteDetails.get("Product1.Amount");
+				String ActualTaxableValue             = CreditNoteDetails.get("TaxableValue");
+				String ActualTotalNetValue            = CreditNoteDetails.get("TotalNetValue");
+				String ActualPaymentDetails           = CreditNoteDetails.get("PaymentDetails");
+				asrt.assertEquals(Sku1GrossWeight, ActualGrossWt1,"Gross Weight mismatch: Expected is "+Sku1GrossWeight+" but found "+ActualGrossWt1+" in credit note");
+				asrt.assertEquals(Sku1StoneWeight, ActualStoneWt1,"StoneWt mismatch: Expected is"+Sku1StoneWeight+" but found "+ActualStoneWt1+" in credit note");
+				asrt.assertEquals(Sku1NetWeight, ActualNetWt1,"NetWt mismatch: Expected is"+Sku1NetWeight+" but found "+ActualNetWt1+" in credit note");
+				asrt.assertEquals(Double.parseDouble(Sku1Total), Double.parseDouble(ActualAmount1),1.0,"Amount mismatch: Expected is"+Sku1Total+" but found "+ActualAmount1+" in credit note");
+			}	
+
+			//27.In cash, click on "Recall Estimate"
+			//28.Select the estimate, Click on Recall Estimation
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Cash("tab-button-ButtonGrid2","text semilight primaryFontColor"));
+			base.buttonClick(LoginPageObj.Edt_AlertText("Recall Estimate"));
+			base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+			base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell",ActualEstmnNumber));
+
+			// 29.Select transaction type as "Exchange" and click on Process estimation
+			// 30.Choose a sales representative
+			// 31.Click on the Amount For printing Receipt
+			//Expected:Check Exchange invoice details		
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconGo"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"));
+			base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"), NormalSalesReturnUncutorPreciaTestData.TC38_TransactionTypeExchange);
+			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAccept"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Ele_SKUNumber("margin0 h5 ellipsis maxWidth220", "1"));
+			String AmountDueForExchangeFromBillingPge    = base.GetText(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink")).replace("₹", "").replace(",", "").trim();
+			double AmountDueForExchangeInFromBillingPge  = Double.parseDouble(AmountDueForExchangeFromBillingPge);			
+			String ExpectedAmountForExchangeInBillingPge = base.GetText(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink")).replace("-", "").replace("₹", "").replace(",", "").trim();
+			if (AmountDueForExchangeInFromBillingPge<0.00) {
+				appUtils.PaymentModeForDiffTransactions(UtilityTestData.PaymentMode, "", "",
+						UtilityTestData.SalePersonNumber,
+						UtilityTestData.SalePersonName,
+						UtilityTestData.DueYear,
+						UtilityTestData.NomineeName,
+						UtilityTestData.NomineeRelation);
+				base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+				base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell", "NORMAL ADV. INVOICE"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("PRINT"));
+				Map<String, String> AdvanceReceiptVoucherDetails = pdfUtils.NormalAdvancePdfValidation();
+				String ActualAdvanceReceived = AdvanceReceiptVoucherDetails.get("AdvanceReceived");
+				String ActualNetReceived     = AdvanceReceiptVoucherDetails.get("NetAdvance");
+				String ActualPaymentMode     = AdvanceReceiptVoucherDetails.get("PaymentMode");
+				String PaymentAmount         = AdvanceReceiptVoucherDetails.get("PaymentAmount");
+				String ApproxWeight          = AdvanceReceiptVoucherDetails.get("ApproxWeight");
+				String ActualFixedGoldRate   = AdvanceReceiptVoucherDetails.get("FixedGoldRate");
+				String ActualDepositType     = AdvanceReceiptVoucherDetails.get("DepositType");
+				asrt.assertEquals(ExpectedAmountForExchangeInBillingPge, ActualAdvanceReceived,"Advance value mismatch: Expected is "+ExpectedAmountForExchangeInBillingPge+" but found "+ActualAdvanceReceived+" in Advance receipt");
+				asrt.assertEquals(ExpectedAmountForExchangeInBillingPge, ActualNetReceived,"Net value mismatch: Expected is "+ExpectedAmountForExchangeInBillingPge+" but found "+ActualNetReceived+" in Advance receipt");
+				asrt.assertEquals(NormalSalesReturnUncutorPreciaTestData.TC38_PaymentMode, ActualPaymentMode,"Payment Mode mismatch: Expected is "+NormalSalesReturnUncutorPreciaTestData.TC38_PaymentMode+" but found "+ActualPaymentMode+" in Advance receipt");
+				asrt.assertEquals(ExpectedAmountForExchangeInBillingPge, PaymentAmount,"Payment Amount mismatch: Expected is "+ExpectedAmountForExchangeInBillingPge+" but found "+PaymentAmount+" in Advance receipt");
+				base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+			}
+			else
+			{
+				base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+				base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+				double  GrossWeight = Double.parseDouble(ExpectedGrossWeightInItemDetailsPge);
+				String  ExpectedGrossWeightFromBillingPge         = String.format("%.3f", GrossWeight);  
+				String  ExpectedOUPurchaseRateFromItemDetailsPge  = String.format("%.2f",ActualCurrentGoldRate22kInItemDetailsPge);
+				double  TotalAmountForOU                          = Double.parseDouble(TotalAmountInItemDetailsPge);
+				String  ExpectedTotalAmountForOU                  = String.format("%.2f", TotalAmountForOU);  
+				String	ExpectedTotal    =TotalAmountInItemDetailsPge;
+				String	ExpectedItemToal =TotalAmountInItemDetailsPge;
+				String	ExpectedPyament  =TotalAmountInItemDetailsPge;
+				pdfUtils.ValidateOUPdf(NormalSalesReturnUncutorPreciaTestData.TC38_PaymentMode, NormalSalesReturnUncutorPreciaTestData.TC38_CustomerName, ExpectedGrossWtOU, ExpectedNetWtOU, ActualOURateInItemDetailPge, ExpectedTotal, ExpectedItemToal, ExpectedPyament);
+			}
+
+			// 32.In cash, click on "Recall Estimate"
+			//33.Select the estimate, Click on Recall Estimation
+			//34.Select transaction type as "Sales" and click on Process estimation
+			// 35.Choose a sales representative
+			//36.Click on the Amount For printing Receipt
+			//Expected: Cashier Screen after recall:No of Product lines,Displayed Item Name,Displayed Quantity,Displayed TOTAL (without Tax),Displayed Subtotal,TAX,Total Amount
+			//Expected:Check final invoice details, save receipt id for future reference
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Cash("tab-button-ButtonGrid2","text semilight primaryFontColor"));
+			base.buttonClick(LoginPageObj.Edt_AlertText("Recall Estimate"));
+			base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+			base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+			base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), ActualEstmnNumber);
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell",ActualEstmnNumber));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconGo"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"));
+			base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"), NormalSalesReturnUncutorPreciaTestData.TC38_TransactionTypeSales);
+			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAccept"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Ele_SKUNumber("margin0 h5 ellipsis maxWidth220", "1"));
+
+			Thread.sleep(3000);
+			Map<String, String> TransactionRecallDataLineSales = appUtils.TransactionSKUsLinesVerify(SkuList, ScannedSkuDataMap);
+			String SubTotalReturnSales			 = TransactionRecallDataLineSales.get("Subtotal");
+			String DiscountReturnSales 			 = TransactionRecallDataLineSales.get("Discount");
+			String TotalGrossWeightReturnSales   = TransactionRecallDataLineSales.get("GrossWeight");
+			String TotalNewNetWeightReturnSales  = TransactionRecallDataLineSales.get("NetWeight");
+			String TaxReturnSales 				 = TransactionRecallDataLineSales.get("Tax");
+			String TotalAmountReturnSales	     = TransactionRecallDataLineSales.get("TotalAmount").replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim();
+			String NetTotalReturnSales 			 = TransactionRecallDataLineSales.get("NetTotal").replaceAll("[₹,=:]", "").replaceAll("\\s+", "").trim();
+			String LinesCountReturnSales 		 = TransactionRecallDataLineSales.get("LinesCount");
+
+			erpUtils.ErpValidateTransactionLineCalculation(TransactionRecallDataLineSales, ScannedSkuDataMap);	
+
+			String GrossAmountForSale               = base.GetText(NormalSaleGoldAndSilverObj.Ele_Lines("SubtotalField", "h4"));
+			String TaxableValueForSale              = base.GetText(NormalSaleGoldAndSilverObj.Ele_Lines("SubtotalField", "h4"));
+			String TotalValueForSale                = base.GetText(NormalSaleGoldAndSilverObj.Ele_Lines("TotalAmountField", "h4"));
+			String TotalNetValueForSale             = base.GetText(NormalSaleGoldAndSilverObj.Ele_Lines("TotalAmountField", "h4"));
+			String TotalQtyPcsForSale               = String.valueOf(SkuList.size());
+			String TotalDiscountForSale             = Discount;
+			String TotalNetWeightForSale            = TotalNetWeight;
+			String TotalGrossWeightForSale          = SaleProductQtyList.get(0);
+			String AdjustmentForSale                = base.GetText(NormalSaleGoldAndSilverObj.Ele_Lines("PaymentsField", "h4"));
+			String AmountDueForSaleFromBillingPge   = base.GetText(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink")).replace("₹", "").replace(",", "").trim();
+			double AmountDueForSaleInFromBillingPge = Double.parseDouble(AmountDueForSaleFromBillingPge);
+			String PaymentAmountForSale ="";
+			if (AmountDueForSaleInFromBillingPge==0.00) {
+				base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+				base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+				PaymentAmountForSale = "";
+			}
+			else {PaymentAmountForSale = appUtils.PaymentAfterRecallEstimate("HDFC");}
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell", "Original For Recipient"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("PRINT"));
+			String TaxInvoiceName = pdfUtils.DownloadAndRenameLatestPDF("TC38_TaxInvoice");		
+			String TaxInvoice     =System.getProperty("user.dir") + "\\Invoices\\"+TaxInvoiceName+"";
+			String TotalDiamond   = "";
+			String PdfInvoiceNo   = pdfUtils.SaleInvoicePdfAdjustmentValidation(
+					TaxInvoice,
+					GrossAmountForSale,
+					TotalDiscountForSale,
+					TotalDiamond,
+					TotalQtyPcsForSale,
+					TotalNetWeightForSale,
+					TotalGrossWeightForSale,
+					TaxableValueForSale,
+					TotalNetValueForSale,
+					PaymentAmountForSale,
+					AdjustmentForSale,
+					SkuList,
+					ScannedSkuDataMap
+					);
+			pdfUtils.DeleteAllPDFFilesInInvoiceFolder();
+		}
 }

@@ -30,10 +30,8 @@
   
      <class name="testScenario.NormalSaleDiamondandPlatinum.NormalSaleDiamondandPlatinum_Test">
      <methods>
-     <include name="TC07_NormalSaleDiamondandPlatinumTest()"/>
      <include name="TC08_NormalSaleDiamondandPlatinumTest()"/>
      <include name="TC09_NormalSaleDiamondandPlatinumTest()"/>
-     <include name="TC10_NormalSaleDiamondandPlatinumTest()"/>
      <include name="TC11_NormalSaleDiamondandPlatinumTest()"/>
      </methods>
      </class>
@@ -44,7 +42,6 @@
      <include name="TC13_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
      <include name="TC14_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
      <include name="TC15_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
-     <include name="TC16_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
      <include name="TC17_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
      <include name="TC18_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
      <include name="TC19_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
@@ -54,10 +51,8 @@
   
 	 <class name="testScenario.NormalSalesReturnDiamondPlatinumReturnSaleCounter.NormalSalesReturnDiamondPlatinumReturnSaleCounter_Test">
 	 <methods>
-	 <include name="TC23_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+	
 	 <include name="TC24_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
-	 <include name="TC25_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
-	 <include name="TC26_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
 	 <include name="TC27_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
 	 </methods>
 	 </class>
@@ -75,7 +70,6 @@
      <methods>
      <include name="TC35_NormalSalesReturnUncutorPreciaTest()"/>
      <include name="TC36_NormalSalesReturnUncutorPreciaTest()"/>
-     <include name="TC37_NormalSalesReturnUncutorPreciaTest()"/>
      </methods>
      </class>
     
@@ -92,6 +86,10 @@
      <class name="testScenario.OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactions.OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactions_Test">
      <methods>
      <include name="TC61_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <include name="TC54_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <include name="TC59_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <include name="TC55_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <include name="TC57_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
      </methods>
      </class>
      

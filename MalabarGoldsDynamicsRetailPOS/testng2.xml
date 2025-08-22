@@ -1,0 +1,145 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AutomationTestSuite" parallel="false">
+  
+  <!-- Extent Report Listener -->
+  <listeners>
+    <listener class-name="extentReporterpack.ExtentReportListner"/>
+    <listener class-name="utilPack.RetryListener"/>    
+  </listeners>
+
+  <!-- Test configuration -->
+  <test thread-count="1" name="FunctionalTests">
+    
+    <!-- Parameter for browser -->
+    <parameter name="Browser" value="Chrome"/>
+
+    <!-- Test classes -->
+       <classes>
+
+ 	<class name="testScenario.NormalSalesReturnGoldSilverReturnSaleCounter.NormalSalesReturnGoldSilverReturnSaleCounter_Test">
+     <methods>
+     <exclude name="TC21_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <exclude name="TC22_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     </methods>
+     </class>  
+  
+     <class name="testScenario.NormalSalesReturnDiamondPlatinumReturnSaleCounter.NormalSalesReturnDiamondPlatinumReturnSaleCounter_Test">
+     <methods>
+     <exclude name="TC28_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+     <exclude name="TC29_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+     </methods>
+     </class>
+     
+     <class name="testScenario.NormalSalesReturnUncutorPrecia.NormalSalesReturnUncutorPrecia_Test">
+     <methods>
+     <exclude name="TC34_NormalSalesReturnUncutorPreciaTest()"/>
+     <exclude name="TC38_NormalSalesReturnUncutorPreciaTest()"/>
+     </methods>
+     </class>
+    
+     <class name="testScenario.OldPurchaseExchangeOwnorOtherGoldorSilverSale.OldPurchaseExchangeOwnorOtherGoldorSilverSale_Test">
+     <methods>
+     <exclude name="TC43_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <exclude name="TC44_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <exclude name="TC45_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <exclude name="TC46_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <exclude name="TC48_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <exclude name="TC49_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     </methods>
+     </class>  
+   
+      <class name="testScenario.OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactions.OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactions_Test">
+     <methods>
+     <exclude name="TC50_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <exclude name="TC51_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+	 <exclude name="TC52_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <exclude name="TC53_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <exclude name="TC54_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <exclude name="TC59_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <exclude name="TC62_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <exclude name="TC55_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <exclude name="TC57_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <exclude name="TC56_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <exclude name="TC63_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()" />
+     <exclude name="TC58_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()" />
+     <exclude name="TC60_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()" />
+     </methods>
+      </class>
+      
+      <class name="testScenario.GPPSettlementAverageRateSingleSkuMultipleSku.GPPSettlementAverageRateSingleSkuMultipleSku_Test">
+     <methods>
+     <exclude name="TC110_GPPSettlementAverageRateSingleSkuMultipleSkuTest()"/>
+     <exclude name="TC111_GPPSettlementAverageRateSingleSkuMultipleSkuTest()"/>
+     </methods>
+     </class>
+     
+      <class name="testScenario.CustomerCreation.CustomerCreation_Test">
+     <methods>
+     <exclude name="TC128_CustomerCreationTest()"/>
+     <exclude name="TC130_CustomerCreationTest()"/>
+     <exclude name="TC132_CustomerCreationTest()"/>
+     <exclude name="TC137_CustomerCreationTest()"/>
+     <exclude name="TC139_CustomerCreationTest()"/>
+     <exclude name="TC140_CustomerCreationTest()"/>
+     </methods>
+     </class>
+     
+     <class name="testScenario.AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserve.AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserve_Test">
+     <methods>
+	 <exclude name="TC64_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC65_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC66_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC67_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC68_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC69_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC75_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC76_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC77_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC72_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC73_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+      <exclude name="TC74_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC71_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <exclude name="TC70_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+<include name="TC78_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+
+     </methods>
+     </class>
+     
+     <class name="testScenario.GppOpeningAndCollectionMultiplePlans.GppOpeningAndCollectionMultiplePlans_Test">
+	 <methods>
+     <exclude name="TC102_GppOpeningAndCollectionMultiplePlansTest()"/>
+     <exclude name="TC106_GppOpeningAndCollectionMultiplePlansTest()"/>
+     <exclude name="TC107_GppOpeningAndCollectionMultiplePlansTest()"/>
+     <exclude name="TC103_GppOpeningAndCollectionMultiplePlansTest()"/>
+     <exclude name="TC101_GppOpeningAndCollectionMultiplePlansTest()"/>
+	 <exclude name="TC100_GppOpeningAndCollectionMultiplePlansTest()"/>
+	 <exclude name="TC99_GppOpeningAndCollectionMultiplePlansTest()"/>
+	 <include name="TC105_GppOpeningAndCollectionMultiplePlansTest()"/>
+	 <include name="TC108_GppOpeningAndCollectionMultiplePlansTest"/>
+	 <exclude name="TC104_GppOpeningAndCollectionMultiplePlansTest"/>
+	 </methods>
+     </class> 
+    
+	<class name="testScenario.AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPos.AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPos_Test">
+	 <methods>     
+	 <exclude name="TC95_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>  
+     <exclude name="TC97_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/> 
+	 <exclude name="TC81_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <exclude name="TC84_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC86_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <exclude name="TC89_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <exclude name="TC96_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC85_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC82_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC80_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC79_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC88_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC91_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC87_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC83_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>	 
+	 </methods>
+     </class> 
+    </classes>
+  </test>
+
+</suite>

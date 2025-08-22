@@ -2,6 +2,7 @@
 package utilPack;
 
 import java.awt.Dimension;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
@@ -28,7 +29,10 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import testData.Utility_TestData;
+
 public class BaseTest {
+	 
 	public WebDriver driver;
 	ScreenShotCapture sc;
 	@BeforeSuite
@@ -53,7 +57,8 @@ public class BaseTest {
 	@BeforeMethod
 	@Parameters("Browser")
 	public void InitializeDriver(@Optional("Chrome") String browser) throws InterruptedException {
-	    if (browser == null || browser.trim().isEmpty()) {
+	    
+		if (browser == null || browser.trim().isEmpty()) {
 	        browser = "Chrome"; // fallback
 	    }
 
@@ -76,7 +81,7 @@ public class BaseTest {
 	        Options.setExperimentalOption("prefs", prefs);
 	        Options.setAcceptInsecureCerts(true);
 	        Options.addArguments("--kiosk-printing"); 
-	        Options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+	        Options.setPageLoadStrategy(PageLoadStrategy.EAGER);
 	        driver = new ChromeDriver(Options);
 
 	    } else if (browser.equalsIgnoreCase("Firefox")) {
@@ -88,14 +93,13 @@ public class BaseTest {
 	    }
 
 	    driver.manage().window().maximize();
-	    driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(180));
+	    driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
 
 	    // Application URL to launch
-	    driver.get("https://scuwkj98nz556938096-cpos.su.retail.dynamics.com/#DeviceId=5011D01&TerminalId=5011D01");
+	    driver.get(Utility_TestData.URL);
 	}
 
-
-	@AfterMethod(alwaysRun = true)
+	@AfterMethod(alwaysRun = true) 
 	public void CloseDriver(ITestResult iTestResult) throws IOException {
 		if (iTestResult.getStatus() == ITestResult.FAILURE) {
 			sc = new ScreenShotCapture();
