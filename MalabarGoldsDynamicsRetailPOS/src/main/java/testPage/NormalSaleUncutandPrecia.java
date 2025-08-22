@@ -331,7 +331,8 @@ public class NormalSaleUncutandPrecia extends BasePge {
 			base.setZoom(driver, 80);
 
 			//Step 2 : Click on Transaction button
-			base.excuteJsClick(LoginPageObj.Ele_ErrorMessage("width48 height48 buttonIcon center iconShop"));
+			Thread.sleep(3000);
+			appUtils.HamBurgerButtonClick("iconShop");
 
 			//Step 3 : Select the customer 
 			//Step 4 : Click on add to estimation button

@@ -41,14 +41,14 @@ public class Login extends BasePge {
 	public void loginToApplication(String UserName, String Password) throws InterruptedException
 	{
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(90));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(LoginPageObj.Btn_SingnIn("nextButton")));
 		base.setZoom(driver, 65);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(LoginPageObj.Btn_SingnIn("nextButton")));
 		base.buttonClick(LoginPageObj.Btn_SingnIn("nextButton"));
 		base.setZoom(driver, 65);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(LoginPageObj.Btn_SingnIn("activateButton")));
 		base.buttonClick(LoginPageObj.Btn_SingnIn("activateButton"));
 		base.setZoom(driver, 65);
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		EnterCredential(UserName, Password);
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
 		wait.until(ExpectedConditions.visibilityOfElementLocated(LoginPageObj.Edt_Alert("DA1016")));

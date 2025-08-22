@@ -16,7 +16,7 @@ public class NormalSalesReturnDiamondPlatinumReturnSaleCounter_Test extends Base
 		normalSalesReturnDiamondPlatinumReturnSaleCounter = new NormalSalesReturnDiamondPlatinumReturnSaleCounter(getDriver());
 		normalSalesReturnDiamondPlatinumReturnSaleCounter.TC23_NormalSalesReturnDiamondPlatinumReturnSaleCounter();
 	}
-     @Test
+	@Test
 	public void TC24_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest() throws Exception
 	{		
 		normalSalesReturnDiamondPlatinumReturnSaleCounter = new NormalSalesReturnDiamondPlatinumReturnSaleCounter(getDriver());
@@ -35,10 +35,25 @@ public class NormalSalesReturnDiamondPlatinumReturnSaleCounter_Test extends Base
 		normalSalesReturnDiamondPlatinumReturnSaleCounter = new NormalSalesReturnDiamondPlatinumReturnSaleCounter(getDriver());
 		normalSalesReturnDiamondPlatinumReturnSaleCounter.TC26_NormalSalesReturnDiamondPlatinumReturnSaleCounter();
 	}
+
 	@Test()
 	public void TC27_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest() throws Exception
 	{	
 		normalSalesReturnDiamondPlatinumReturnSaleCounter = new NormalSalesReturnDiamondPlatinumReturnSaleCounter(getDriver());
 		normalSalesReturnDiamondPlatinumReturnSaleCounter.TC27_NormalSalesReturnDiamondPlatinumReturnSaleCounter();
+
+	}
+
+	@Test()
+	public void TC28_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest() throws Exception
+	{	
+		normalSalesReturnDiamondPlatinumReturnSaleCounter = new NormalSalesReturnDiamondPlatinumReturnSaleCounter(getDriver());
+		normalSalesReturnDiamondPlatinumReturnSaleCounter.TC28_NormalSalesReturnDiamondPlatinumReturnSaleCounter();
+	}
+	@Test()
+	public void TC29_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest() throws Exception
+	{	
+		normalSalesReturnDiamondPlatinumReturnSaleCounter = new NormalSalesReturnDiamondPlatinumReturnSaleCounter(getDriver());
+		normalSalesReturnDiamondPlatinumReturnSaleCounter.TC29_NormalSalesReturndiamondPlatinumReturnSaleCounter();
 	}
 }

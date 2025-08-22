@@ -1,0 +1,128 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AutomationTestSuite" parallel="false">
+  
+  <!-- Extent Report Listener -->
+  <listeners>
+    <listener class-name="extentReporterpack.ExtentReportListner"/>
+    <listener class-name="utilPack.RetryListener"/>    
+  </listeners>
+
+  <!-- Test configuration -->
+  <test thread-count="1" name="FunctionalTests">
+    
+    <!-- Parameter for browser -->
+    <parameter name="Browser" value="Chrome"/>
+
+    <!-- Test classes -->
+       <classes>
+
+     <class name="testScenario.NormalSalesReturnGoldSilverReturnSaleCounter.NormalSalesReturnGoldSilverReturnSaleCounter_Test">
+     <methods>
+      <include name="TC16_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC21_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC22_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     </methods>
+     </class>  
+  
+     <class name="testScenario.NormalSalesReturnDiamondPlatinumReturnSaleCounter.NormalSalesReturnDiamondPlatinumReturnSaleCounter_Test">
+     <methods>
+     <include name="TC23_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+     <include name="TC25_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+	 <include name="TC26_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+     <include name="TC28_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+     <include name="TC29_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+     </methods>
+     </class>
+     
+     <class name="testScenario.NormalSalesReturnUncutorPrecia.NormalSalesReturnUncutorPrecia_Test">
+     <methods>
+     <include name="TC34_NormalSalesReturnUncutorPreciaTest()"/>
+     <include name="TC37_NormalSalesReturnUncutorPreciaTest()"/>
+     <include name="TC38_NormalSalesReturnUncutorPreciaTest()"/>
+     </methods>
+     </class>
+    
+     <class name="testScenario.OldPurchaseExchangeOwnorOtherGoldorSilverSale.OldPurchaseExchangeOwnorOtherGoldorSilverSale_Test">
+     <methods>
+     <include name="TC43_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <include name="TC44_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <include name="TC45_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <include name="TC46_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <include name="TC48_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <include name="TC49_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     </methods>
+     </class>  
+   
+      <class name="testScenario.OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactions.OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactions_Test">
+     <methods>
+     <include name="TC50_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+	 <include name="TC52_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <include name="TC53_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <include name="TC62_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <include name="TC56_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     <include name="TC63_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()" />
+     </methods>
+      </class>
+     
+      <class name="testScenario.GPPSettlementAverageRateSingleSkuMultipleSku.GPPSettlementAverageRateSingleSkuMultipleSku_Test">
+     <methods>
+     <include name="TC110_GPPSettlementAverageRateSingleSkuMultipleSkuTest()"/>
+     </methods>
+     </class>
+     
+      <class name="testScenario.CustomerCreation.CustomerCreation_Test">
+     <methods>
+     <include name="TC128_CustomerCreationTest()"/>
+     <include name="TC130_CustomerCreationTest()"/>
+     <include name="TC132_CustomerCreationTest()"/>
+     <include name="TC137_CustomerCreationTest()"/>
+     <include name="TC139_CustomerCreationTest()"/>
+     <include name="TC140_CustomerCreationTest()"/>
+     </methods>
+     </class>
+     
+     <class name="testScenario.AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserve.AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserve_Test">
+     <methods>
+	 <include name="TC64_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC65_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC66_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC67_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC68_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC69_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC75_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC76_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC77_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     <include name="TC72_AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceSkuReserveTest()"/>
+     </methods>
+     </class>
+     
+     <class name="testScenario.GppOpeningAndCollectionMultiplePlans.GppOpeningAndCollectionMultiplePlans_Test">
+	 <methods>
+     <include name="TC102_GppOpeningAndCollectionMultiplePlansTest()"/>
+     <include name="TC106_GppOpeningAndCollectionMultiplePlansTest()"/>
+     <include name="TC107_GppOpeningAndCollectionMultiplePlansTest()"/>
+	 </methods>
+     </class>
+
+	<class name="testScenario.AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPos.AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPos_Test">
+	 <methods>     
+	 <include name="TC95_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>  
+     <include name="TC97_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/> 
+	 <include name="TC81_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 <include name="TC84_AdvanceSettlementNormalAdvanceOfferAdvanceConvertToAdvanceAddOnAdvanceLegacyPosTest()"/>
+	 </methods>
+     </class>  
+     
+      <class name="testScenario.NormalSaleDiamondandPlatinum.NormalSaleDiamondandPlatinum_Test">
+     <methods>
+     <include name="TC07_NormalSaleDiamondandPlatinumTest()"/>
+     <include name="TC10_NormalSaleDiamondandPlatinumTest()"/>
+     </methods>
+     </class>  
+     
+    </classes>
+  </test>
+
+</suite>
+
+

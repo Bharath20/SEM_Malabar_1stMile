@@ -33,6 +33,17 @@ public void TC37_NormalSalesReturnUncutorPreciaTest() throws Exception
 {	normalSalesReturnUncutOrPrecia  = new NormalSalesReturnUncutorPrecia(getDriver());	
 	normalSalesReturnUncutOrPrecia.TC37_NormalSalesReturnUncutorPrecia();		
 }
+@Test()
+public void TC34_NormalSalesReturnUncutorPreciaTest() throws Exception 
+{	normalSalesReturnUncutOrPrecia  = new NormalSalesReturnUncutorPrecia(getDriver());	
+	normalSalesReturnUncutOrPrecia.TC34_NormalSalesReturnUncutorPrecia();		
+}
 
+@Test()
+public void TC38_NormalSalesReturnUncutorPreciaTest() throws Exception 
+{	
+normalSalesReturnUncutOrPrecia = new NormalSalesReturnUncutorPrecia(getDriver());
+normalSalesReturnUncutOrPrecia.TC38_NormalSalesReturnUncutorPrecia();		
+}
 
 }

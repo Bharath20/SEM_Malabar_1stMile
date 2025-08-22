@@ -8,6 +8,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +26,7 @@ import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -33,9 +36,15 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+
+import objectRepository.AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvance_Obj;
+import objectRepository.GPPSettlementAverageRateSingleSkuMultipleSku_Obj;
+import objectRepository.GppOpeningAndCollectionMultiplePlans_Obj;
 import objectRepository.LoginPage_Obj;
+import objectRepository.NormalSaleDiamondandPlatinum_Obj;
 import objectRepository.NormalSaleGoldandSilver_Obj;
 import objectRepository.NormalSalesReturnGoldSilverReturnSaleCounter_Obj;
+import objectRepository.OldPurchaseExchangeOwnorOtherGoldorSilverSale_Obj;
 import testData.CommonData;
 import testData.Utility_TestData;
 import testPage.Login;
@@ -58,6 +67,11 @@ public class AppUtilities  {
 	Utility_TestData UtilityTestData = new Utility_TestData();
 	NormalSalesReturnGoldSilverReturnSaleCounter_Obj NormalSalesReturnGoldSilverReturnSaleCounterObj=new NormalSalesReturnGoldSilverReturnSaleCounter_Obj(); 
 	NormalSaleGoldandSilver_Obj NormalSaleGoldAndSilverObj = new NormalSaleGoldandSilver_Obj();
+	NormalSaleDiamondandPlatinum_Obj NormalSaleDiamondandPlatinumObj =new NormalSaleDiamondandPlatinum_Obj();
+	OldPurchaseExchangeOwnorOtherGoldorSilverSale_Obj OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj = new OldPurchaseExchangeOwnorOtherGoldorSilverSale_Obj();
+	AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvance_Obj AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj = new AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvance_Obj();
+	GPPSettlementAverageRateSingleSkuMultipleSku_Obj GPPSettlementAverageRateSingleSkuMultipleSkuObj = new GPPSettlementAverageRateSingleSkuMultipleSku_Obj();
+	GppOpeningAndCollectionMultiplePlans_Obj GppOpeningAndCollectionMultiplePlansObj = new GppOpeningAndCollectionMultiplePlans_Obj();
 
 	public AppUtilities(BasePge base) {
 		this.base   = base;
@@ -75,8 +89,17 @@ public class AppUtilities  {
 		List<String> SelectedSkus = new ArrayList<>();
 
 		// Navigate to SKU counter transfer page
-		base.buttonClick(LoginPageObj.Edt_AlertText("Purchase"));
-		base.buttonClick(LoginPageObj.Edt_AlertText("Counter Transfer"));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
+		// Wait until loader disappears
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("loader")));
+
+		// Now click the element
+		wait.until(ExpectedConditions.elementToBeClickable(LoginPageObj.Edt_AlertText("Purchase"))).click();
+
+		//base.buttonClick(LoginPageObj.Edt_AlertText("Purchase"));
+		//base.buttonClick(LoginPageObj.Edt_AlertText("Counter Transfer"));
+		base.ClickCondition(LoginPageObj.Edt_AlertText("Counter Transfer"));
 
 		// Select transfer criteria
 		base.buttonClick(NormalSaleGoldAndSilverObj.Sel_DepositType("TransferType"));
@@ -133,10 +156,20 @@ public class AppUtilities  {
 	/// </summary>	
 	public void SearchByCustomerID(String CustomerID,String Option) throws InterruptedException 
 	{
+		// Wait for loader or overlay to go away
+		WebDriverWait Wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		Wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader"))); 
 
-		base.excuteJsClick(NormalSaleGoldAndSilverObj.Edt_Name("Search"));
-		Thread.sleep(2000);
-		base.setData(NormalSaleGoldAndSilverObj.Edt_Name("Search"),CustomerID);
+		// Wait for field to be clickable, then click via JS (if necessary)
+		By SearchBox = NormalSaleGoldAndSilverObj.Edt_Name("Search");
+
+		Wait.until(ExpectedConditions.elementToBeClickable(SearchBox));
+		base.excuteJsClick(SearchBox); // JS click to focus the field
+
+		// Wait again for it to be interactable
+		WebElement element = Wait.until(ExpectedConditions.elementToBeClickable(SearchBox));
+		element.clear();  
+		element.sendKeys(CustomerID);
 
 		Thread.sleep(3000);
 
@@ -153,7 +186,7 @@ public class AppUtilities  {
 		}
 		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_MenuBarOptions(Option));
 
-		asrt.assertTrue(base.isExists(NormalSaleGoldAndSilverObj.Ele_OGProduct("Main content")), "The corresponding "+Option+" is not displayed to the user on clicking options from the menubar");
+		//asrt.assertTrue(base.isExists(NormalSaleGoldAndSilverObj.Ele_OGProduct("Main content")), "The corresponding "+Option+" is not displayed to the user on clicking options from the menubar");
 	}
 
 	/// <summary>
@@ -162,7 +195,7 @@ public class AppUtilities  {
 	/// </summary>
 	public String PaymentAfterRecallEstimate(String PaymentMethod) throws InterruptedException {
 		base.buttonClick(NormalSaleGoldAndSilverObj.Sel_AmountDue("Amount due"));
-        Thread.sleep(5000);
+		Thread.sleep(5000);
 		asrt.assertTrue(driver.findElement(NormalSaleGoldAndSilverObj.Ele_Payement("Payment method")).isDisplayed(), "'Payment method' page is not displayed to user on clicking the amount due in line page after recall estimation");
 		asrt.assertTrue(base.isExists(NormalSaleGoldAndSilverObj.Ele_Payement("Payment method")), "'Payment method' page is not displayed to user on clicking the amount due in line page after recall estimation");
 
@@ -244,8 +277,7 @@ public class AppUtilities  {
 
 			else if (numericAmount < 0.00){
 
-				//base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
-				base.ClickCondition(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
 				Thread.sleep(2000);
 
 				asrt.assertTrue(base.isExists(LoginPageObj.Edt_AlertText("Convert to Advance")),"The user is not able to view the payment methods");
@@ -399,112 +431,128 @@ public class AppUtilities  {
 	}
 
 	/// <summary>
-		/// Fetch and store all values in SKU Ingredient Page (Optimized version with reduced wait time)
-		/// </summary>
-		public void SKUIngridentTableValues(String Sku, int SkuNumber, Map<String, String> DataMap) throws Exception {
+	/// Fetch and store all values in SKU Ingredient Page (Optimized version with reduced wait time)
+	/// </summary>
+	public void SKUIngridentTableValues(String Sku, int SkuNumber, Map<String, String> DataMap) throws Exception {
 
-			// Step 1: Click "Add to Cart" to activate the SKU input field
-			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart("h1 marginBottom0 button-content-abc primaryFontColor"));
+		// Step 1: Click "Add to Cart" to activate the SKU input field
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart("h1 marginBottom0 button-content-abc primaryFontColor"));
 
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-			//driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-			Thread.sleep(3000);
-			// Step 2: Wait and enter the SKU string into the input field (do not clear existing data)
-			//wait.until(ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Edt_Name("Search or enter quantity")));
-			base.setDataWithoutClear(NormalSaleGoldAndSilverObj.Edt_Name("Search or enter quantity"), Sku);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		//driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+		Thread.sleep(3000);
+		// Step 2: Wait and enter the SKU string into the input field (do not clear existing data)
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Edt_Name("Search or enter quantity")));
+		base.setDataWithoutClear(NormalSaleGoldAndSilverObj.Edt_Name("Search or enter quantity"), Sku);
 
-			// Step 3: Press return key button to trigger SKU search
-			wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Btn_AddtoCart("h1 marginBottom0 iconReturnKey button-content-return"))).click();
+		// Step 3: Press return key button to trigger SKU search
+		wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Btn_AddtoCart("h1 marginBottom0 iconReturnKey button-content-return"))).click();
 
-			// Step 4: Adjust zoom level to 40%
-			base.setZoom(driver, 40);
+		// Step 4: Adjust zoom level to 40%
+		base.setZoom(driver, 40);
 
-			// Step 5: Wait until the data table with SKU details appears on the screen
-			wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.dataListLine")));
+		// Step 5: Wait until the data table with SKU details appears on the screen
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.dataListLine")));
 
-			// Step 6: Fetch and store item-level details in DataMap
-			DataMap.put("SKU_" + SkuNumber + "_GrossWeight", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightInput"), "value"));
-			DataMap.put("SKU_" + SkuNumber + "_Purity", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("Purity"), "value"));
-			DataMap.put("SKU_" + SkuNumber + "_TotalCValue", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("valueInput"), "value"));
-			DataMap.put("SKU_" + SkuNumber + "_MakingRate", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("makingRateInput"), "value"));
-			DataMap.put("SKU_" + SkuNumber + "_MakingValue", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("makingValueInput"), "value"));
-			DataMap.put("SKU_" + SkuNumber + "_MakingType", base.getTheSelectedTextInDropDown(NormalSaleGoldAndSilverObj.Sel_DepositType("makingTypeOptions")));
-			DataMap.put("SKU_" + SkuNumber + "_WastageQty", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Wastage Qty"), "value"));
-			DataMap.put("SKU_" + SkuNumber + "_WastageAmount", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Wastage amount"), "value"));
-			DataMap.put("SKU_" + SkuNumber + "_ItemName", base.GetText(By.xpath("//h3[@data-bind='text: SectionHeader']")));
-			DataMap.put("SKU_" + SkuNumber + "_Total", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("totalInput"), "value"));
-			DataMap.put("SKU_" + SkuNumber + "_HeaderName", base.GetText(By.xpath("//h3[@data-bind='text: SectionHeader']")));
-			DataMap.put("SKU_" + SkuNumber + "_CvalueTextField", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("valueInput"), "value"));
-			DataMap.put("SKU_" + SkuNumber + "_RateTextField", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("rateInput"), "value"));
+		// Step 6: Fetch and store item-level details in DataMap
+		DataMap.put("SKU_" + SkuNumber + "_GrossWeight", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightInput"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_Purity", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("Purity"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_TotalCValue", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("valueInput"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_MakingRate", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("makingRateInput"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_MakingValue", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("makingValueInput"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_MakingType", base.getTheSelectedTextInDropDown(NormalSaleGoldAndSilverObj.Sel_DepositType("makingTypeOptions")));
+		DataMap.put("SKU_" + SkuNumber + "_WastageQty", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Wastage Qty"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_WastageAmount", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Wastage amount"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_ItemName", base.GetText(By.xpath("//h3[@data-bind='text: SectionHeader']")));
+		DataMap.put("SKU_" + SkuNumber + "_Total", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("totalInput"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_HeaderName", base.GetText(By.xpath("//h3[@data-bind='text: SectionHeader']")));
+		DataMap.put("SKU_" + SkuNumber + "_CvalueTextField", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("valueInput"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_RateTextField", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("rateInput"), "value"));
 
-			// Step 7: Adjust zoom level to 30% for better visibility
-			base.setZoom(driver, 30);
+		// Step 7: Adjust zoom level to 30% for better visibility
+		base.setZoom(driver, 30);
 
-			// Step 8: Extract and flatten table data into DataMap
-			List<Map<String, String>> SkuData = ExtractTableData(driver);
-			for (int ItemIndex = 0; ItemIndex < SkuData.size(); ItemIndex++) {
-				Map<String, String> Row = SkuData.get(ItemIndex);
-				for (Map.Entry<String, String> Entry : Row.entrySet()) {
-					String Key = "SKU" + SkuNumber + "_ITEM" + (ItemIndex + 1) + "_" + Entry.getKey().toUpperCase().replaceAll("\\s+", "");
-					DataMap.put(Key, Entry.getValue());
-				}
-			}
-
-			// Step 9: Click the "Estimation" button to add the SKU estimation
-			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAdd"));
-
-			// Step 10: Calculate and store weights (StoneWeight, NetWeight, RGWeight)
-			double StoneWeight = 0.0, NetWeight = 0.0, TotalRGWeight = 0.0;
-			for (int ItemIndex = 0; ItemIndex < SkuData.size(); ItemIndex++) {
-				String prefix = "SKU" + SkuNumber + "_ITEM" + (ItemIndex + 1);
-				String ItemId = DataMap.getOrDefault(prefix + "_ITEMID", "").trim().toUpperCase();
-				String QtyStr = DataMap.getOrDefault(prefix + "_QTY", "0").replaceAll("[^\\d.]", "");
-				String Unit = DataMap.getOrDefault(prefix + "_UNIT", "").trim().toLowerCase();
-
-				if (!QtyStr.isEmpty()) {
-					double Qty = Math.round(Double.parseDouble(QtyStr) * 1000.0) / 1000.0;
-
-					if (ItemId.equals("RG") || ItemId.equals("RP") || ItemId.equals("RS")) {
-						NetWeight += Qty;
-						if (ItemId.equals("RG")) {
-							double QtyInGrams = Unit.contains("ct") ? Qty * 0.2 : Qty;
-							TotalRGWeight += QtyInGrams;
-						}
-					} else {
-						StoneWeight += Unit.contains("ct") ? Qty * 0.2 : Qty;
-					}
-				}
-			}
-
-			// Step 11: Round and store the final computed weight values
-			DataMap.put("SKU_" + SkuNumber + "_StoneWeight", String.format("%.3f", StoneWeight));
-			DataMap.put("SKU_" + SkuNumber + "_NetWeight", String.format("%.3f", NetWeight));
-			DataMap.put("SKU_" + SkuNumber + "_TotalRGWeight", String.format("%.3f", TotalRGWeight));
-
-			// Step 12: Store the SKU header name
-			DataMap.put("SKU_" + SkuNumber + "_SKUName", base.GetText(NormalSaleGoldAndSilverObj.Ele_SKUHeader("text: SectionHeader")));
-
-			// Step 13: Click the "Estimation" button again (final confirmation)
-			wait.until(ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAdd"))).click();
-
-			// Step 14: If first SKU, reset zoom and focus on first SKU box
-			if (SkuNumber == 1) {
-				base.setZoom(driver, 40);
-				wait.until(ExpectedConditions.elementToBeClickable(
-						NormalSaleGoldAndSilverObj.Ele_SKUNumber("margin0 h5 ellipsis maxWidth220","1"))).click();
-			}
-
-			// Extra: Handle "Specify price" modal if it appears
-			try {
-				if (base.isElementPresent(driver, NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_SpecifyPrice("Specify price"))) {
-					base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Btn_KeyOne("numpad-control-buttons flexGrow100 flexRow", "1", "1"));
-					base.buttonClick(NormalSaleGoldAndSilverObj.Btn_abc("flexGrow50 flexRow row-enter", "Enter"));
-					Thread.sleep(500); // Short delay for modal to close
-				}
-			} catch (Exception e) {
-				// Modal not shown — no action needed
+		// Step 8: Extract and flatten table data into DataMap
+		List<Map<String, String>> SkuData = ExtractTableData(driver);
+		for (int ItemIndex = 0; ItemIndex < SkuData.size(); ItemIndex++) {
+			Map<String, String> Row = SkuData.get(ItemIndex);
+			for (Map.Entry<String, String> Entry : Row.entrySet()) {
+				String Key = "SKU" + SkuNumber + "_ITEM" + (ItemIndex + 1) + "_" + Entry.getKey().toUpperCase().replaceAll("\\s+", "");
+				DataMap.put(Key, Entry.getValue());
 			}
 		}
+
+		// Step 9: Click the "Estimation" button to add the SKU estimation
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAdd"));
+
+		// Step 10: Calculate and store weights (StoneWeight, NetWeight, RGWeight)
+		double StoneWeight = 0.0, NetWeight = 0.0, TotalRGWeight = 0.0;
+		String Rate_RP = "";
+		String Rate_RG = "";
+		for (int ItemIndex = 0; ItemIndex < SkuData.size(); ItemIndex++) {
+			String prefix = "SKU" + SkuNumber + "_ITEM" + (ItemIndex + 1);
+			String ItemId = DataMap.getOrDefault(prefix + "_ITEMID", "").trim().toUpperCase();
+			String QtyStr = DataMap.getOrDefault(prefix + "_QTY", "0").replaceAll("[^\\d.]", "");
+			String Unit = DataMap.getOrDefault(prefix + "_UNIT", "").trim().toLowerCase();
+			String Rate = DataMap.getOrDefault(prefix + "_RATE", "0").replaceAll("[^\\d.]", "");
+
+			if (!Rate.isEmpty()) {			
+				if (ItemId.equals("RP")) {
+					Rate_RP = Rate;
+				}
+				if (ItemId.equals("RG")) {
+					Rate_RG = Rate;
+				}
+			}
+			if (!QtyStr.isEmpty()) {
+				double Qty = Math.round(Double.parseDouble(QtyStr) * 1000.0) / 1000.0;
+
+				if (ItemId.equals("RG") || ItemId.equals("RP") || ItemId.equals("RS")) {
+					NetWeight += Qty;
+					if (ItemId.equals("RG")) {
+						double QtyInGrams = Unit.contains("ct") ? Qty * 0.2 : Qty;
+						TotalRGWeight += QtyInGrams;
+					}
+				} else {
+					StoneWeight += Unit.contains("ct") ? Qty * 0.2 : Qty;
+				}
+			}
+		}
+
+		// Step 11: Round and store the final computed weight values
+		DataMap.put("SKU_" + SkuNumber + "_StoneWeight", String.format("%.3f", StoneWeight));
+		DataMap.put("SKU_" + SkuNumber + "_NetWeight", String.format("%.3f", NetWeight));
+		DataMap.put("SKU_" + SkuNumber + "_TotalRGWeight", String.format("%.3f", TotalRGWeight));
+
+		DataMap.put("SKU_" + SkuNumber + "_RateRP", Rate_RP);
+		DataMap.put("SKU_" + SkuNumber + "_RateRG", Rate_RG);
+
+		// Step 12: Store the SKU header name
+		DataMap.put("SKU_" + SkuNumber + "_SKUName", base.GetText(NormalSaleGoldAndSilverObj.Ele_SKUHeader("text: SectionHeader")));
+
+		// Step 13: Click the "Estimation" button again (final confirmation)
+		wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAdd"))).click();
+
+		// Step 14: If first SKU, reset zoom and focus on first SKU box
+		if (SkuNumber == 1) {
+			base.setZoom(driver, 40);
+			wait.until(ExpectedConditions.elementToBeClickable(
+					NormalSaleGoldAndSilverObj.Ele_SKUNumber("margin0 h5 ellipsis maxWidth220","1"))).click();
+		}
+
+		// Extra: Handle "Specify price" modal if it appears
+		WebDriverWait AlertWait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		//		Thread.sleep(1000);
+		try {
+			if(AlertWait.until(ExpectedConditions.presenceOfElementLocated(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_SpecifyPrice("Specify price")))!= null){
+				base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Btn_KeyOne("numpad-control-buttons flexGrow100 flexRow", "1", "1"));
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_abc("flexGrow50 flexRow row-enter", "Enter"));
+				Thread.sleep(500); // Short delay for modal to close
+			}
+		} catch (Exception e) {
+		}
+
+	}
 	/// <summary>
 	/// Fetch and store all values in Transaction Lines Page
 	/// </summary>	
@@ -526,11 +574,15 @@ public class AppUtilities  {
 		for (int i = 1; i <= SkuCount; i++) {
 			By SkuLocator = NormalSaleGoldAndSilverObj.Ele_SKUNumber("tillLayout-QuantityField textRight", "h5", String.valueOf(i));
 			String ValueStr = base.GetText(SkuLocator);
-
+			ValueStr = ValueStr.replaceAll("[^\\d.-]", "");
+			double Grosswt = Double.parseDouble(ValueStr);
+			Results.put("GrossWeight" + i, String.format("%.3f", Grosswt));
 			if (ValueStr != null && !ValueStr.isEmpty()) {
-				ValueStr = ValueStr.replaceAll("[^\\d.-]", "");
+
 				try {
+
 					TotalGrossWeight += Double.parseDouble(ValueStr);
+
 				} catch (NumberFormatException e) {
 					System.out.println("Invalid number at index " + i + ": " + ValueStr);
 				}
@@ -619,24 +671,24 @@ public class AppUtilities  {
 		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_Configuration("col grow"),SelectConfiguration);
 
 		//Step for Bug: 'Unexpected Error' Pop up displayed in the Old Gold Details page
-		if (base.isElementPresent(driver, By.cssSelector("button[data-ax-bubble='messageDialog_TemplatedDialogButton1'].primaryButton"))) {
-			try {
+		WebDriverWait Alertwait = new WebDriverWait(driver, Duration.ofSeconds(7));
+		try {
+			//			if (base.isElementPresent(driver, By.cssSelector("button[data-ax-bubble='messageDialog_TemplatedDialogButton1'].primaryButton"))) {
+			if (Alertwait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("button[data-ax-bubble='messageDialog_TemplatedDialogButton1'].primaryButton"))) != null) {
 				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 
 				base.excuteJsClick(By.cssSelector("button[data-ax-bubble='messageDialog_TemplatedDialogButton1'].primaryButton"));
 				System.out.println("Popup appeared and OK button was clicked.");
-				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-			} catch (Exception e) {
-				System.out.println("Failed to click the OK button: " + e.getMessage());
-			}
-		} else {
-
-			System.out.println("Popup not found, skipping the close button action.");
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+			} 
+		}catch (Exception e) { 
+			System.out.println("Error Popup not found, skipping the close button action.");
 		}
+
 		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart1("SimpleProductDetailsView_addProductToSale","win-commandimage"));
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 		Thread.sleep(1000);
-		base.buttonClick(NormalSaleGoldAndSilverObj.Ele_Name(PurchaseORExchange));
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_Name(PurchaseORExchange));
 		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("qcInput"),QCPerson);
 		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("smInput"),SmithPerson);
 		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("piecesogp"),GrossPieces);
@@ -686,86 +738,86 @@ public class AppUtilities  {
 	/// Method to return single or multiple product with details
 	/// Author : Anagha
 	/// </summary>
-public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<String> RequiredReturnProductList) throws InterruptedException {
-	    List<String> returnedProductNames = new ArrayList<>();
-	    List<String> returnedProductQty = new ArrayList<>();
-	    List<String> returnedProductPrice = new ArrayList<>();
+	public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<String> RequiredReturnProductList) throws InterruptedException {
+		List<String> returnedProductNames = new ArrayList<>();
+		List<String> returnedProductQty = new ArrayList<>();
+		List<String> returnedProductPrice = new ArrayList<>();
 
-	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-	    base.buttonClick(LoginPageObj.Edt_AlertText("Billing"));
-	    base.buttonClick(NormalSaleGoldAndSilverObj.Btn_CustomerAdjustment("Customer Adjustments"));
+		base.buttonClick(LoginPageObj.Edt_AlertText("Billing"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_CustomerAdjustment("Customer Adjustments"));
 
-	    for (String ItemCategory : RequiredReturnProductList) {
-	        if (ItemCategory.equalsIgnoreCase("Gold") ||
-	            ItemCategory.equalsIgnoreCase("Silver") ||
-	            ItemCategory.equalsIgnoreCase("Diamond") ||
-	            ItemCategory.equalsIgnoreCase("Uncut") ||
-	            ItemCategory.equalsIgnoreCase("Platinum") ||
-	            ItemCategory.equalsIgnoreCase("Precia")) {
+		for (String ItemCategory : RequiredReturnProductList) {
+			if (ItemCategory.equalsIgnoreCase("Gold") ||
+					ItemCategory.equalsIgnoreCase("Silver") ||
+					ItemCategory.equalsIgnoreCase("Diamond") ||
+					ItemCategory.equalsIgnoreCase("Uncut") ||
+					ItemCategory.equalsIgnoreCase("Platinum") ||
+					ItemCategory.equalsIgnoreCase("Precia")) {
 
-	            wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Btn_CustomerAdjustment("Return transaction"))).click();
-	            wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Btn_abc("numpad-control alphanumeric-mode flexCol", "Enable text editing"))).click();
-	            base.setData(NormalSaleGoldAndSilverObj.Edt_TextField("numpad-control alphanumeric-mode flexCol", "text"), ReceiptNo);
-	            base.buttonClick(NormalSaleGoldAndSilverObj.Btn_IconReturnKey("numpad-control-buttons flexGrow100 flexRow", "content-return"));
+				wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Btn_CustomerAdjustment("Return transaction"))).click();
+				wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Btn_abc("numpad-control alphanumeric-mode flexCol", "Enable text editing"))).click();
+				base.setData(NormalSaleGoldAndSilverObj.Edt_TextField("numpad-control alphanumeric-mode flexCol", "text"), ReceiptNo);
+				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_IconReturnKey("numpad-control-buttons flexGrow100 flexRow", "content-return"));
 
-	            if (base.isElementPresent(driver, NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionStoreNames"))) {
-	                try {
-	                    WebElement storeDropdown = wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionStoreNames")));
-	                    storeDropdown.click();
-	                    base.selectorByIndex(NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionStoreNames"), 1);
+				if (base.isElementPresent(driver, NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionStoreNames"))) {
+					try {
+						WebElement storeDropdown = wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionStoreNames")));
+						storeDropdown.click();
+						base.selectorByIndex(NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionStoreNames"), 1);
 
-	                    WebElement regDropdown = wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionRegisterNumbers")));
-	                    regDropdown.click();
-	                    base.selectorByIndex(NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionRegisterNumbers"), 1);
+						WebElement regDropdown = wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionRegisterNumbers")));
+						regDropdown.click();
+						base.selectorByIndex(NormalSaleGoldAndSilverObj.Sel_DepositType("multipleTransactionRegisterNumbers"), 1);
 
-	                    wait.until(ExpectedConditions.elementToBeClickable(LoginPageObj.Ele_ErrorMessage("buttonContainer col no-shrink halfWidth leftmostDialogButton marginTop20"))).click();
-	                } catch (Exception e) {
-	                    // Log or ignore
-	                }
-	            }
+						wait.until(ExpectedConditions.elementToBeClickable(LoginPageObj.Ele_ErrorMessage("buttonContainer col no-shrink halfWidth leftmostDialogButton marginTop20"))).click();
+					} catch (Exception e) {
+						// Log or ignore
+					}
+				}
 
-	            List<WebElement> ReturnableProductList = base.GetElement(NormalSaleGoldAndSilverObj.Ele_Lines("salesOrderLinesView", "enhancedGridDynamicRowTemplate ratio5"));
-	            List<WebElement> ReturnableProductQty = base.GetElement(NormalSaleGoldAndSilverObj.Ele_Lines("salesOrderLinesView", "enhancedGridDynamicRowTemplate ratio1 textRight"));
-	            List<WebElement> ReturnableProductPrice = base.GetElement(NormalSaleGoldAndSilverObj.Ele_Lines("salesOrderLinesView", "enhancedGridDynamicRowTemplate ratio2 textRight"));
+				List<WebElement> ReturnableProductList = base.GetElement(NormalSaleGoldAndSilverObj.Ele_Lines("salesOrderLinesView", "enhancedGridDynamicRowTemplate ratio5"));
+				List<WebElement> ReturnableProductQty = base.GetElement(NormalSaleGoldAndSilverObj.Ele_Lines("salesOrderLinesView", "enhancedGridDynamicRowTemplate ratio1 textRight"));
+				List<WebElement> ReturnableProductPrice = base.GetElement(NormalSaleGoldAndSilverObj.Ele_Lines("salesOrderLinesView", "enhancedGridDynamicRowTemplate ratio2 textRight"));
 
-	            for (int i = 0; i < ReturnableProductList.size(); i++) {
-	                String ProdName = ReturnableProductList.get(i).getText();
-	                String ProQty = ReturnableProductQty.get(i).getText();
-	                String ProdPrice = ReturnableProductPrice.get(i).getText();
+				for (int i = 0; i < ReturnableProductList.size(); i++) {
+					String ProdName = ReturnableProductList.get(i).getText();
+					String ProQty = ReturnableProductQty.get(i).getText();
+					String ProdPrice = ReturnableProductPrice.get(i).getText();
 
-	                if ((ItemCategory.equalsIgnoreCase("Gold") && ProdName.startsWith("G")) ||
-	                    (ItemCategory.equalsIgnoreCase("Silver") && ProdName.startsWith("S")) ||
-	                    (ItemCategory.equalsIgnoreCase("Diamond") && ProdName.startsWith("D")) ||
-	                    (ItemCategory.equalsIgnoreCase("Uncut") && ProdName.startsWith("U")) ||
-	                    (ItemCategory.equalsIgnoreCase("Platinum") && (ProdName.startsWith("PL") || ProdName.startsWith("Pl") || ProdName.startsWith("pl") || ProdName.startsWith("PG"))) ||
-	                    (ItemCategory.equalsIgnoreCase("Precia") && ProdName.toLowerCase().startsWith("pr"))) {
+					if ((ItemCategory.equalsIgnoreCase("Gold") && ProdName.startsWith("G")) ||
+							(ItemCategory.equalsIgnoreCase("Silver") && ProdName.startsWith("S")) ||
+							(ItemCategory.equalsIgnoreCase("Diamond") && ProdName.startsWith("D")) ||
+							(ItemCategory.equalsIgnoreCase("Uncut") && ProdName.startsWith("U")) ||
+							(ItemCategory.equalsIgnoreCase("Platinum") && (ProdName.startsWith("PL") || ProdName.startsWith("Pl") || ProdName.startsWith("pl") || ProdName.startsWith("PG"))) ||
+							(ItemCategory.equalsIgnoreCase("Precia") && ProdName.toLowerCase().startsWith("pr"))) {
 
-	                    ReturnableProductList.get(i).click();
-	                    base.buttonClick(NormalSaleGoldAndSilverObj.Btn_return("Return"));
-	                    returnedProductNames.add(ProdName);
-	                    returnedProductQty.add(ProQty);
-	                    returnedProductPrice.add(ProdPrice);
-	                    break;
-	                }
-	            }
-	        }
-	    }
+						ReturnableProductList.get(i).click();
+						base.buttonClick(NormalSaleGoldAndSilverObj.Btn_return("Return"));
+						returnedProductNames.add(ProdName);
+						returnedProductQty.add(ProQty);
+						returnedProductPrice.add(ProdPrice);
+						break;
+					}
+				}
+			}
+		}
 
-	    return new ReturnDetails(returnedProductNames, returnedProductQty, returnedProductPrice);
+		return new ReturnDetails(returnedProductNames, returnedProductQty, returnedProductPrice);
 	}
 	public class ReturnDetails {
-	    public List<String> productNames;
-	    public List<String> productQty;
-	    public List<String> productPrice;
+		public List<String> productNames;
+		public List<String> productQty;
+		public List<String> productPrice;
 
-	    public ReturnDetails(List<String> productNames, List<String> productQty, List<String> productPrice) {
-	        this.productNames = productNames;
-	        this.productQty = productQty;
-	        this.productPrice = productPrice;
-	    }
+		public ReturnDetails(List<String> productNames, List<String> productQty, List<String> productPrice) {
+			this.productNames = productNames;
+			this.productQty = productQty;
+			this.productPrice = productPrice;
+		}
 	}
-	
+
 	///<summary>
 	/// Method to get Making Rate and Piece rate items from product search page
 	///Author : Anagha, Chandana Babu
@@ -1123,14 +1175,14 @@ public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<St
 			base.buttonClick(LoginPageObj.Edt_AlertText("Inter receipt search"));
 
 			// Fetch and Store the Recepit list based on the users terminal
-//			List<WebElement> AllElements = new ArrayList<>();			
-//			AllElements.addAll(base.GetElement(LoginPageObj.Ele_ErrorMessage("win-container win-container-even")));
-//
-//			List<WebElement> oddElements = base.GetElement(LoginPageObj.Ele_ErrorMessage("win-container win-container-odd"));
-//			if (oddElements != null) {
-//				AllElements.addAll(oddElements);
-//			}
-			
+			//			List<WebElement> AllElements = new ArrayList<>();			
+			//			AllElements.addAll(base.GetElement(LoginPageObj.Ele_ErrorMessage("win-container win-container-even")));
+			//
+			//			List<WebElement> oddElements = base.GetElement(LoginPageObj.Ele_ErrorMessage("win-container win-container-odd"));
+			//			if (oddElements != null) {
+			//				AllElements.addAll(oddElements);
+			//			}
+
 			List<WebElement> AllElements = base.GetElement(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_RecipetNumber());
 			// Get the SKU number that the user is using.
 			for (WebElement Key : AllElements)
@@ -1391,17 +1443,17 @@ public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<St
 
 		// Select Transfer Type
 		base.buttonClick(NormalSaleGoldAndSilverObj.Sel_DepositType("TransferType"));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//select[@id='TransferType']")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Sel_DepositType("TransferType")));
 		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("TransferType"), TransferType);
 
 		// Select From Counter 
 		base.buttonClick(NormalSaleGoldAndSilverObj.Sel_DepositType("FromCounter"));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//select[@id='FromCounter']")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Sel_DepositType("FromCounter")));
 		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("FromCounter"), FromCounter);
 
 		// Select Metal Type
 		base.buttonClick(NormalSaleGoldAndSilverObj.Sel_DepositType("MetalType"));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//select[@id='MetalType']")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Sel_DepositType("MetalType")));
 		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("MetalType"), MetalType);
 
 		// Navigate to Product Search
@@ -1420,7 +1472,7 @@ public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<St
 		int triesWithoutNew = 0;
 
 		while (PcsRateSKUs.size() < skuCount && triesWithoutNew < maxTriesWithoutNew) {
-			List<WebElement> CurrentRows = driver.findElements(By.xpath("//div[@class='win-container']"));
+			List<WebElement> CurrentRows = driver.findElements(NormalSaleGoldAndSilverObj.Btn_AddtoCart("win-container"));
 			int NewItems = 0;	
 			for (WebElement Row : CurrentRows) {
 				String RowText = Row.getText().trim();
@@ -1464,7 +1516,6 @@ public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<St
 			this.PcsRateSKU = pcsRateSKUs;
 		}
 	}
-
 	///<summary>
 	/// Method to Fetch Sku and Invoice Number from Normal Sale
 	/// Author: Nivya
@@ -1613,10 +1664,9 @@ public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<St
 			boolean SkuCategorized = false;
 
 			System.out.println("Selected sku " + Sku);
-//			Thread.sleep(3000);
-//			base.excuteJsClick(LoginPageObj.Ele_ErrorMessage("width48 height48 buttonIcon center iconShop"));
+
 			this.HamBurgerButtonClick("iconShop");
- 
+
 			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart("h1 marginBottom0 button-content-abc primaryFontColor"));
 			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -1660,17 +1710,21 @@ public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<St
 			}
 
 			AvailableProducts.remove(Sku);
-      
+
 			if (!SkuCategorized) {
 				System.out.println("SKU not matched with any category or limit reached: " + Sku);
 			}
+
 			this.HamBurgerButtonClick("iconShop");
+
 			if (DiamondWithPlatinumSku.size() >= skuCountPerCategory &&
 					DualTonePlatinumSku.size() >= skuCountPerCategory &&
 					NormalPlatinumSku.size() >= skuCountPerCategory) {
 				System.out.println("All " + skuCountPerCategory + " SKUs per type collected.");
 				break;
 			}
+
+
 		}
 		// Final categorized map
 		Map<String, List<String>> ResultMap = new LinkedHashMap<>();
@@ -1850,7 +1904,7 @@ public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<St
 				System.out.println("All " + skuCountPerCategory + " SKUs per type collected.");
 				break;
 			}
-         
+
 			try {
 				if (HamBurgerWait.until(ExpectedConditions.visibilityOfElementLocated(
 						LoginPageObj.Ele_ErrorMessage("width48 height48 buttonIcon center iconShop"))) != null) {
@@ -1858,7 +1912,7 @@ public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<St
 					base.excuteJsClick(LoginPageObj.Ele_ErrorMessage("width48 height48 buttonIcon center iconHome"));
 				}
 			} catch (Exception e) {
-				
+
 				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation(
 						"headerSplitViewToggleButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
 				Thread.sleep(3000);
@@ -1868,32 +1922,1244 @@ public ReturnDetails ReturnMultipleProductsWithDetails(String ReceiptNo, List<St
 
 		return DualTonePlatinumSku;
 	}
-	
-	///<Summary>
-		///Method to click on the Hamburger Icon
-		///@Author: Gokul.P
-		///</Summary>
-		public void HamBurgerButtonClick(String NavigationIcons) throws InterruptedException
-		{
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("loader")));
-	     try
-	     {
-			if (wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(NormalSaleGoldAndSilverObj.Ele_Purchase("customNavItems"))) != null)
-			{
-				Thread.sleep(3000);		
-				base.ClickCondition(NormalSalesReturnGoldSilverReturnSaleCounterObj.Txt_Sku(NavigationIcons));
-				wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("loader")));
-			}else
-			{
-				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
-				Thread.sleep(3000);
-				base.ClickCondition(NormalSalesReturnGoldSilverReturnSaleCounterObj.Txt_Sku(NavigationIcons));
-			}}catch(Exception e) {
-			
-				base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
-				Thread.sleep(3000);
-				base.ClickCondition(NormalSalesReturnGoldSilverReturnSaleCounterObj.Txt_Sku(NavigationIcons));
+
+
+	///Summary
+	///Method to validate the items in Recall page having OG, OD,OGT-before performing exchange,sales
+	///Author-Christy Reji
+	///Summary
+	public void ValidateRecallPageOGItem(List<String> ExpectedItemNames, List<String> ItemQuantity, 
+			String ExpectedItemNameInOgItemDetailsPge, String ExpectedGrossWeightInItemDetailsPge,
+			double ExpectedSubtotal, double ExpectedTax, double ExpectedTotal, int TotalLinesBillingPage,String OGName) {
+
+		List<WebElement> ItemNamesFromRecall = base.GetElement(NormalSaleGoldAndSilverObj.Ele_ItemRecallEst("gridcell", "ITEM NAME"));
+		List<WebElement> QuantityFromRecall = base.GetElement(NormalSaleGoldAndSilverObj.Ele_ItemRecallEst("gridcell", "QUANTITY"));
+		int TotalLinesRecallPage = ItemNamesFromRecall.size();
+
+		for (int k = 0; k < ItemNamesFromRecall.size(); k++) {
+			String ActualItemRaw = ItemNamesFromRecall.get(k).getText().trim();
+
+			if (ActualItemRaw.equalsIgnoreCase(ExpectedItemNameInOgItemDetailsPge)) {
+				// OGT Item Validation
+				asrt.assertEquals(ActualItemRaw, ExpectedItemNameInOgItemDetailsPge,"OG Item Name mismatch: Expected " + ExpectedItemNameInOgItemDetailsPge + " but got " + ActualItemRaw + " in Recall page");
+
+				String QtyStr       = QuantityFromRecall.get(k).getText().trim().replaceAll("[^\\d.]", "");
+				double ActualQty    = Double.parseDouble(QtyStr);
+				double ExpectedQty  = Double.parseDouble(ExpectedGrossWeightInItemDetailsPge.trim().replaceAll("[^\\d.]", ""));
+				asrt.assertEquals(ExpectedQty, ActualQty,"OG Quantity mismatch: Expected " + ExpectedQty + " but got " + ActualQty + " in Recall page");
+
+				System.out.println("The"+OGName+" Item Validation successful from recall page");
+			} else {
+				String ExpectedItemRaw = ExpectedItemNames.get(k).trim();
+				String ActualItemName = ActualItemRaw.contains("-")
+						? ActualItemRaw.substring(ActualItemRaw.lastIndexOf("-") + 1).trim()
+								: ActualItemRaw.trim();
+
+				String ExpectedItemName = ExpectedItemRaw.contains("-")
+						? ExpectedItemRaw.substring(ExpectedItemRaw.lastIndexOf("-") + 1).trim()
+								: ExpectedItemRaw.trim();
+
+				System.out.println("The names: " + ExpectedItemNames);
+				System.out.println("Expected: " + ExpectedItemRaw + "\nActual: " + ActualItemRaw);
+
+				asrt.assertEquals(ActualItemName, ExpectedItemName,
+						"Item Name mismatch: Expected " + ExpectedItemName + " but got " + ActualItemName + " in Recall page");
+
+
+				String QtyStr           = QuantityFromRecall.get(k).getText().trim().replaceAll("[^\\d.]", "");
+				double ActualQty        = Double.parseDouble(QtyStr);
+				String ExpectedQtyStr   = ItemQuantity.get(k).trim().replaceAll("[^\\d.]", "");
+				double ExpectedQty      = Double.parseDouble(ExpectedQtyStr);
+				asrt.assertEquals(ExpectedQty, ActualQty,"Quantity mismatch: Expected " + ExpectedQty + " but got " + ActualQty + " in Recall page");
+				System.out.println("The Non"+OGName+" Item Validation successful from recall page");
 			}
-   }
+		}
+
+		double ActualTotalWithoutTax = Math.abs(Double.parseDouble(base.GetText(NormalSaleGoldAndSilverObj.Ele_TotWithoutTax("text: viewModel.TotalWithoutTax"))));
+		asrt.assertEquals(ExpectedSubtotal, ActualTotalWithoutTax,"Total (Without Tax) mismatch: Expected " + ExpectedSubtotal + " but got " + ActualTotalWithoutTax + " in Recall page");
+
+		double ActualTax = Double.parseDouble(base.GetText(NormalSaleGoldAndSilverObj.Ele_TotWithoutTax("text: viewModel.TotalTax")));
+		asrt.assertEquals(ExpectedTax, ActualTax,"Tax Value mismatch: Expected " + ExpectedTax + " but got " + ActualTax + " in Recall page");
+
+		double ActualSubTotal = Math.abs(Double.parseDouble(base.GetText(NormalSaleGoldAndSilverObj.Ele_TotWithoutTax("text: viewModel.SubTotal"))));
+		asrt.assertEquals(ExpectedTotal, ActualSubTotal,"SubTotal mismatch: Expected " + ExpectedTotal + " but got " + ActualSubTotal + " in Recall page");
+		asrt.assertEquals(TotalLinesBillingPage, TotalLinesRecallPage,"Total line count mismatch: Expected " + TotalLinesBillingPage + " but got " + TotalLinesRecallPage + " in Recall page");
+		System.out.println("======== Validation completed from recall page ==================");
+	}
+
+
+	/// <summary>
+	/// Method to Purchase or Exchange Old Silver. 
+	/// This method describes the user can Purchase or Exchange the Old Silver products and can add those products to the cart.
+	/// Step for Bug: 'Unexpected Error' Pop up displayed in the Old Silver Details page
+	/// Author : Neethu
+	/// </summary>	
+	public void PurchaseOldSilver(String SelectConfiguration, String PurchaseORExchange, String QCPerson, String SmithPerson, String GrossPieces, String GrossWeight) throws Exception
+	{
+		asrt.assertTrue(base.isExists(NormalSaleGoldAndSilverObj.Ele_Transaction("Transaction")), "The user is not able to navigate to Transaction page");
+
+		base.buttonClick(NormalSaleGoldAndSilverObj.Edt_Name("Search"));
+		base.setData(NormalSaleGoldAndSilverObj.Edt_Name("Search"),"OS");
+		Thread.sleep(2000);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Ele_SearchList("Products"));
+
+		Thread.sleep(2000);
+		asrt.assertTrue(base.isExists(LoginPageObj.Btn_SignInButton("Products")),"The User is not able to view OG Product in Product Page");
+		Thread.sleep(2000);
+		driver.findElement(LoginPageObj.Edt_AlertText(UtilityTestData.SilverProduct)).click();
+
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));	
+		base.buttonClick(NormalSaleGoldAndSilverObj.Sel_Configuration("col grow"));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_Configuration("col grow"),SelectConfiguration);
+
+		//Step for Bug: 'Unexpected Error' Pop up displayed in the Old Silver Details page
+		if (base.isElementPresent(driver, By.cssSelector("button[data-ax-bubble='messageDialog_TemplatedDialogButton1'].primaryButton"))) {
+			try {
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+
+				base.excuteJsClick(By.cssSelector("button[data-ax-bubble='messageDialog_TemplatedDialogButton1'].primaryButton"));
+				System.out.println("Popup appeared and OK button was clicked.");
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+			} catch (Exception e) {
+				System.out.println("Failed to click the OK button: " + e.getMessage());
+			}
+		} else {
+
+			System.out.println("Popup not found, skipping the close button action.");
+		}
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart1("SimpleProductDetailsView_addProductToSale","win-commandimage"));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+		Thread.sleep(1000);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Ele_Name(PurchaseORExchange));
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("qcInput"),QCPerson);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("smInput"),SmithPerson);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("piecesogp"),GrossPieces);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightogp"),GrossWeight);
+		base.scrollToElementtoCenter(NormalSaleGoldAndSilverObj.Btn_Deposit("Calculate"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Calculate"));
+
+	}
+	/// <summary>
+	/// Fetch and store all values in SKU Ingredient Page(For OD/OG/OS) (Optimized version with reduced wait time)
+	/// </summary>
+	public void ItemDetailsTableValues(int SkuNumber, Map<String, String> DataMap) throws Exception {
+		String ItemNameForOD = base.GetText(NormalSaleGoldAndSilverObj.Ele_SKUHeader("text: SectionHeader"));
+		String ExpectedItemNameInItemDetailsPge = ItemNameForOD.substring(ItemNameForOD.indexOf("-") + 2);
+		System.out.println("ExpectedItemNameInItemDetailsPge========="+ExpectedItemNameInItemDetailsPge);
+		DataMap.put("SKU_" + SkuNumber + "_SKUName", ExpectedItemNameInItemDetailsPge);
+		DataMap.put("SKU_" + SkuNumber + "_GrossWeight", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightogp"), "value"));
+		DataMap.put("SKU_" + SkuNumber + "_Total", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("ogptotalamt"), "value"));
+		// Step 8: Extract and flatten table data into DataMap
+		base.setZoom(driver, 20);
+		List<Map<String, String>> SkuData = ExtractTableData(driver);
+		for (int ItemIndex = 0; ItemIndex < SkuData.size(); ItemIndex++) {
+			Map<String, String> Row = SkuData.get(ItemIndex);
+			for (Map.Entry<String, String> Entry : Row.entrySet()) {
+				String Key = "SKU" + SkuNumber + "_ITEM" + (ItemIndex + 1) + "_" + Entry.getKey().toUpperCase().replaceAll("\\s+", "");
+				DataMap.put(Key, Entry.getValue());
+				System.out.println(Key + " = " + Entry.getValue());
+			}
+		}
+
+		// Step 10: Calculate and store weights (StoneWeight, NetWeight, RGWeight)
+		double StoneWeight = 0.0, NetWeight = 0.0, TotalRGWeight = 0.0;
+		for (int ItemIndex = 0; ItemIndex < SkuData.size(); ItemIndex++) {
+			String prefix = "SKU" + SkuNumber + "_ITEM" + (ItemIndex + 1);
+			String ItemId = DataMap.getOrDefault(prefix + "_ITEMID", "").trim().toUpperCase();
+			String QtyStr = DataMap.getOrDefault(prefix + "_QTY", "0").replaceAll("[^\\d.]", "");
+			String Unit = DataMap.getOrDefault(prefix + "_UNIT", "").trim().toLowerCase();
+
+			if (!QtyStr.isEmpty()) {
+				double Qty = Math.round(Double.parseDouble(QtyStr) * 1000.0) / 1000.0;
+
+				if (ItemId.equals("RG") || ItemId.equals("RP") || ItemId.equals("RS")) {
+					NetWeight += Qty;
+					if (ItemId.equals("RG")) {
+						double QtyInGrams = Unit.contains("ct") ? Qty * 0.2 : Qty;
+						TotalRGWeight += QtyInGrams;
+					}
+				} else {
+					StoneWeight += Unit.contains("ct") ? Qty * 0.2 : Qty;
+				}
+			}
+		}
+
+		// Step 11: Round and store the final computed weight values
+		DataMap.put("SKU_" + SkuNumber + "_StoneWeight", String.format("%.3f", StoneWeight));
+		DataMap.put("SKU_" + SkuNumber + "_NetWeight", String.format("%.3f", NetWeight));
+		DataMap.put("SKU_" + SkuNumber + "_TotalRGWeight", String.format("%.3f", TotalRGWeight));
+	}
+
+	///<summary>
+	/// Method to execute the Recall Estimate and process estimation steps
+	///Author : Hasna EK
+	/// </summary>
+	public void RecallEstimateProcess(String EstimationNo, String TransactionType) throws Exception {
+
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Cash("tab-button-ButtonGrid2","text semilight primaryFontColor"));
+		base.buttonClick(LoginPageObj.Edt_AlertText("Recall Estimate"));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+
+		base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"),EstimationNo);
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+		base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), EstimationNo);
+		Thread.sleep(1000);
+
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell",EstimationNo));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconGo"));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(4));
+
+		//Verify whether the recalled item is the same as the item in the cart.
+		String EstmnNumberRecallPge = base.GetValue(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Estimation no"));
+		asrt.assertEquals(EstimationNo,EstmnNumberRecallPge,"Mismatch in Estimation number, expected: "+EstimationNo+" but got "+EstmnNumberRecallPge+" in Recall Estimation page ");
+
+		base.buttonClick(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"));
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Transaction type"), TransactionType);
+
+		// Click on Process Estimation  
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconAccept")); 
+	}
+
+	///<Summary>
+	///Method to click on the Hamburger Icon
+	///@Author: Gokul.P
+	///</Summary>
+	public void HamBurgerButtonClick(String NavigationIcons) throws InterruptedException
+	{
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("loader")));
+
+		try {
+			Thread.sleep(3000);		
+			base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Txt_Sku(NavigationIcons));
+			wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("loader")));
+		}catch(Exception e) 
+		{
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
+			Thread.sleep(3000);
+			base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Txt_Sku(NavigationIcons));
+		}		
+	}
+	/// <summary>
+	/// Method to search by customer ID and selecting option from menu bar for GPP Customer
+	///Author-Jhoncy
+	/// </summary>	
+	public void SearchByCustomerIDForGPP(String CustomerID,String Option) throws InterruptedException
+	{
+		// Wait for loader or overlay to go away
+		WebDriverWait Wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		Wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("loader")));
+
+		// Wait for field to be clickable, then click via JS (if necessary)
+		By SearchBox = NormalSaleGoldAndSilverObj.Edt_Name("Search");
+
+		Wait.until(ExpectedConditions.elementToBeClickable(SearchBox));
+		base.excuteJsClick(SearchBox); // JS click to focus the field
+
+		// Wait again for it to be interactable
+		WebElement element = Wait.until(ExpectedConditions.elementToBeClickable(SearchBox));
+		element.clear();  
+		element.sendKeys(CustomerID);
+
+		Thread.sleep(3000);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_CustomerSearch("Customers"));
+		asrt.assertTrue(base.isExists(LoginPageObj.Btn_SignInButton("Customers")),"The user is not able to navigate to the customer page");
+
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_ViewMore("win-commandingsurface-ellipsis win-appbar-ellipsis"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_MenuBarOptions(Option));
+	}
+	/// <summary>
+	/// Method to Create customer offer advance
+	/// Author: Chandana Babu
+	/// </summary>	
+	public Map<String, String> CreateCustomerOfferAdvance(String CustomerID,String Pieces, String GrossWeight, double DepositPercent,String Company, String Location) throws InterruptedException
+	{
+		Map<String, String> Details = new HashMap<>();
+		//Click on advance-->customer order
+		base.buttonClick(LoginPageObj.Edt_AlertText("Advance"));
+		Thread.sleep(1000);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_return("Customer Order"));
+
+		//Search customer and click on add to customer order
+		this.SearchByCustomerIDForGPP(CustomerID, UtilityTestData.AddToCustomerOrder);
+
+		//Search CST and click on the CST_Order
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Edt_Name("Search"));
+		Thread.sleep(2000);
+		base.setData(NormalSaleGoldAndSilverObj.Edt_Name("Search"),UtilityTestData.ProductOfferAdvance);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_CustomerSearch("Products"));
+		Thread.sleep(3000);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart("dataListLine"));
+
+		WebDriverWait Wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
+		try {
+			Wait.until(ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Btn_AddtoCart("dataListLine")));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart("dataListLine"));
+			System.out.println("Clicked again on CST orderprod");
+		}
+		catch(TimeoutException e) {
+			System.out.println("Not again Clicked on CST orderprod");
+		}
+
+		try {
+			if (Wait.until(ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Ele_Payement("Error")))!=null) {
+				base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+			}
+		}catch(TimeoutException e) {
+			System.out.println("Error Message not found");
+		}
+
+		//Click on "Add to order line"
+		Thread.sleep(1000);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_ViewMore("win-commandingsurface-ellipsis win-appbar-ellipsis"));
+		base.buttonClick(LoginPageObj.Edt_Alert("Add to order line"));
+
+		//Select the 'Is offer order' checkbox
+		base.buttonClick(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_CheckBox("checkbox", "IsofferChkBox"));
+
+		//Choose the company and invent location
+		base.selectorByVisibleText(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_IsOrder("col", "viewModel.IsOrderEntry"), Company);
+		base.selectorByVisibleText(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_IsOrder("col stretch", "viewModel.IsOrderEntry"), Location);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Sales person"), UtilityTestData.SalePersonName);
+
+		//Select the order line
+		base.buttonClick(LoginPageObj.Ele_ErrorMessage("win-itembox"));
+
+		//Select the ingredient line
+		base.scrollToElement(LoginPageObj.Ele_ErrorMessage("win-itembox"));
+		base.buttonClick(LoginPageObj.Ele_ErrorMessage("win-itembox"));
+
+		//Click on edit ingredient line
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(LoginPageObj.Btn_SingnIn("SimpleProductDetailsView_EditSlDtlappBarCommandCommand"));
+
+		//Enter pieces and weight
+		Thread.sleep(1000);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: Pieces"),Pieces);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: Weight"),GrossWeight);
+
+		//Click ok button
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		double TotalAmount = Double.parseDouble(base.GetText(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_TotalAmount("Total Amount", "h4 ellipsis cell")));
+		String AdvanceAmount = Double.toString(TotalAmount);
+		double GoldRate = TotalAmount/Double.parseDouble(GrossWeight);
+		String FixedGoldRate = String.format("%.2f",GoldRate);
+
+		//Click on willing to pay button
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(LoginPageObj.Btn_SingnIn("SimpleProductDetailsView_appWillToPayCommandCommand"));
+
+		//Enter the amount
+		String WillingToPayAmount = Double.toString(TotalAmount*DepositPercent);
+
+		System.out.println("WillingToPayAmount  " + WillingToPayAmount);
+
+		Thread.sleep(1000);
+		base.setData(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Amount("value: WILLAMT", "number"), WillingToPayAmount);
+		Thread.sleep(1000);
+		String OfferExpiryDate= base.GetValue(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: SDATE"));
+		String ValidityDays = base.GetValue(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: SDAYS")).replaceAll("\\D+", "");;
+
+		//Click on apply button
+		base.buttonClick(LoginPageObj.Btn_SignInButton("APPLY"));
+
+		//Step 17: Click on edit line
+		base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Txt_Sku("win-structuralnodes win-selectionmode"));
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(LoginPageObj.Btn_SingnIn("MGDRetail_MGDRetail_Extensions_OrderView_EditSlappBarCommandCommand"));
+
+		//Enter the line delivery date
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate ExpiryDate = LocalDate.parse(OfferExpiryDate, formatter);
+		LocalDate targetDate = ExpiryDate.minusDays(1);
+		String Day = Integer.toString(targetDate.getDayOfMonth());
+		String Month = Integer.toString(targetDate.getMonthValue() - 1);
+		String Year = Integer.toString(targetDate.getYear());		
+		base.selectorByValue(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Date("content ExtensionTemplateDialog", "win-datepicker-date"), Day);
+		base.selectorByValue(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Date("content ExtensionTemplateDialog", "win-datepicker-month"), Month);
+		base.selectorByValue(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Date("content ExtensionTemplateDialog", "win-datepicker-year"), Year);
+
+		//Enter remarks
+		base.setData(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Remarks("value: Remarks"), UtilityTestData.Remarks);
+
+		//Click on OK button
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+
+		//Add nominee details, Select a sales person
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(LoginPageObj.Btn_SingnIn("MGDRetail_MGDRetail_Extensions_OrderView_NomineeDetailsAppBarCommandCommand"));
+		Thread.sleep(1000);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: NomineeName"),UtilityTestData.NomineeName);
+		base.selectorByVisibleText(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Sel_GPPAccountNo("options: NomineeRelationArr"), UtilityTestData.NomineeRelation);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Ele_Name("NomineeChkBox"));	
+		String Address = base.GetText(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: NomineeAddress"));
+		if(Address == "") {
+			base.setData(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: NomineeAddress"),UtilityTestData.NomineeAddress);
+			base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		}
+		else {
+			base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		}
+
+		//Click on save order button
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(LoginPageObj.Btn_SingnIn("MGDRetail_MGDRetail_Extensions_OrderView_appBarCommandCommand"));
+		Thread.sleep(1000);
+		base.buttonClick(LoginPageObj.Btn_SignInButton("YES"));
+		String Message = base.GetText(NormalSaleDiamondandPlatinumObj.Ele_GrossWeight("text: content"));
+		String OrderId = Message.split(" - ")[1].split(" ")[0];
+		//System.out.println(OrderId);
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+
+		Details.put("OrderId",OrderId);
+		Details.put("AdvanceAmount",AdvanceAmount);
+		Details.put("WillingToPayAmount",WillingToPayAmount);
+		Details.put("ValidityDays", ValidityDays);
+		Details.put("OfferExpiryDate", OfferExpiryDate);
+		Details.put("FixedGoldRate", FixedGoldRate);
+
+		return Details;
+	}
+	/// <summary>
+	/// Method to Create Normal Advance 
+	/// Author: Chandana Babu
+	/// </summary>
+	public String CreateNormalAdvance(String CustomerNo, String AdvanceAmount, String SalesPerson, String DueYear) throws Exception {
+		//Select customer and  click on add to sale button
+		Thread.sleep(1000);
+		this.SearchByCustomerID(CustomerNo, UtilityTestData.MenuBarOptions[0]);
+		Thread.sleep(3000);
+		//Click on advance button at the transaction screen
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("text semilight primaryFontColor","Advance"));
+		//Click on advance collection button
+		base.buttonClick(LoginPageObj.Edt_AlertText("Advance Collection"));
+		Thread.sleep(3000);
+		//select deposit type as normal
+		//Enter deposit amount
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("DepAmount"),AdvanceAmount);
+		//Select sales person
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Ele_SalesPerson("4"),SalesPerson);
+		//Select due date
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Ele_DrpdwnYear("win-datepicker-year win-dropdown win-order2 displayOrder3"), DueYear);
+		//Enter remarks
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Remarks("6"),UtilityTestData.Remarks);
+		//Add nominee details
+		base.scrollToElement(NormalSaleGoldAndSilverObj.Btn_Deposit("Add Nominee Details"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Add Nominee Details"));
+		Thread.sleep(1000);
+		//Enter nominee name
+		//Select nominee relation
+		//Click on check box(Same as customer address)					
+		//Click on OK button
+		base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Nominee name"), UtilityTestData.NomineeName);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Nominee relation"), UtilityTestData.NomineeRelation);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_Name("NomineeChkBox"));
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		//Click on deposit button
+		base.scrollToElement(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+		Thread.sleep(3000);
+		//Click on amount
+		//select a Payment method(Cash or Card)
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+		base.buttonClick(LoginPageObj.Edt_AlertText("HDFC (Credit Card)"));
+		String AdvanceAmountPaid = base.GetAttribte(NormalSaleGoldAndSilverObj.Edt_ApprCode("numpad-control-input primaryFontColor numpad-control-input-readonly"),"value");
+		Thread.sleep(2000);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_CartMoney("flexGrow50 flexRow row-enter","h1 marginBottom0 iconReturnKey button-content-return"));
+		Thread.sleep(2000);
+		base.setData(NormalSaleGoldAndSilverObj.Edt_ApprCode("textInputArea"),UtilityTestData.ApprCode);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("OK"));
+		base.setData(NormalSaleGoldAndSilverObj.Edt_ApprCode("textInputArea"),UtilityTestData.CardNumber);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("OK"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Close"));
+		return AdvanceAmountPaid;
+	}
+	/// <summary>
+	/// Find Board Rate Using Skus RG/ RP /RS
+	/// Author: Vishnu Manoj K
+	/// </summary>
+	public void BoardRateFromSkuRporRgorRs(String Sku, int SkuNumber, Map<String, String> DataMap) throws Exception {
+
+		// Step 1: Click "Add to Cart" to activate the SKU input field
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart("h1 marginBottom0 button-content-abc primaryFontColor"));
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		//driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+		Thread.sleep(3000);
+		// Step 2: Wait and enter the SKU string into the input field (do not clear existing data)
+		//wait.until(ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Edt_Name("Search or enter quantity")));
+		base.setDataWithoutClear(NormalSaleGoldAndSilverObj.Edt_Name("Search or enter quantity"), Sku);
+
+		// Step 3: Press return key button to trigger SKU search
+		wait.until(ExpectedConditions.elementToBeClickable(NormalSaleGoldAndSilverObj.Btn_AddtoCart("h1 marginBottom0 iconReturnKey button-content-return"))).click();
+
+		// Step 4: Adjust zoom level to 40%
+		base.setZoom(driver, 40);
+
+		// Step 5: Wait until the data table with SKU details appears on the screen
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.dataListLine")));
+
+		// Step 6: Fetch and store item-level details in DataMap
+		DataMap.put("SKU_" + SkuNumber + "_Purity", base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("Purity"), "value"));
+
+		// Step 7: Adjust zoom level to 30% for better visibility
+		base.setZoom(driver, 30);
+
+		// Step 8: Extract and flatten table data into DataMap
+		List<Map<String, String>> SkuData = ExtractTableData(driver);
+		for (int ItemIndex = 0; ItemIndex < SkuData.size(); ItemIndex++) {
+			Map<String, String> Row = SkuData.get(ItemIndex);
+			for (Map.Entry<String, String> Entry : Row.entrySet()) {
+				String Key = "SKU" + SkuNumber + "_ITEM" + (ItemIndex + 1) + "_" + Entry.getKey().toUpperCase().replaceAll("\\s+", "");
+				DataMap.put(Key, Entry.getValue());
+			}
+		}
+
+		// Step 9: Calculate RG/RS/RP
+		double StoneWeight = 0.0, NetWeight = 0.0, TotalRGWeight = 0.0;
+		String Rate_RP = "";
+		String Rate_RG = "";
+		String Rate_RS = "";
+		for (int ItemIndex = 0; ItemIndex < SkuData.size(); ItemIndex++) {
+			String prefix = "SKU" + SkuNumber + "_ITEM" + (ItemIndex + 1);
+			String ItemId = DataMap.getOrDefault(prefix + "_ITEMID", "").trim().toUpperCase();
+			String QtyStr = DataMap.getOrDefault(prefix + "_QTY", "0").replaceAll("[^\\d.]", "");
+			String Unit = DataMap.getOrDefault(prefix + "_UNIT", "").trim().toLowerCase();
+			String Rate = DataMap.getOrDefault(prefix + "_RATE", "0").replaceAll("[^\\d.]", "");
+
+			if (!Rate.isEmpty()) {			
+				if (ItemId.equals("RP")) {
+					Rate_RP = Rate;
+				}
+				if (ItemId.equals("RG")) {
+					Rate_RG = Rate;
+				}
+				if (ItemId.equals("RS")) {
+					Rate_RS = Rate;
+				}
+			}
+			if (!QtyStr.isEmpty()) {
+				double Qty = Math.round(Double.parseDouble(QtyStr) * 1000.0) / 1000.0;
+
+				if (ItemId.equals("RG") || ItemId.equals("RP") || ItemId.equals("RS")) {
+					NetWeight += Qty;
+					if (ItemId.equals("RG")) {
+						double QtyInGrams = Unit.contains("ct") ? Qty * 0.2 : Qty;
+						TotalRGWeight += QtyInGrams;
+					}
+				} else {
+					StoneWeight += Unit.contains("ct") ? Qty * 0.2 : Qty;
+				}
+			}
+		}
+
+		DataMap.put("SKU_" + SkuNumber + "_RateRP", Rate_RP);
+		DataMap.put("SKU_" + SkuNumber + "_RateRG", Rate_RG);
+		DataMap.put("SKU_" + SkuNumber + "_RateRS", Rate_RS);
+	}
+
+
+
+	/// <summary>			/// Method to Add random SKU from the Test Data  list 
+	/// Author: Vishnu RR
+	/// </summary>	
+
+
+	private static List<String> unusedSKUs = new ArrayList<>();
+
+	public static String getRandomSKU(List<String> skuList) {
+		if (unusedSKUs.isEmpty()) {
+			unusedSKUs = new ArrayList<>(skuList); // Reset when all are used
+		}
+		Random rand = new Random();
+		String sku = unusedSKUs.remove(rand.nextInt(unusedSKUs.size())); // Pick & remove from this round
+		return sku;
+	}
+
+	/// <summary>
+	///	Method to Create customer offer advance with weight booked
+	/// Method to Create customer offer advance
+	/// Author: Hasna EK
+	/// </summary>
+	public Map<String, String> CreateWeightBookedOfferAdvance(String CustomerId,String Pieces, String GrossWeight, String Company, String Location, double DepositePercentage) throws Exception  {	
+		Map<String, String> Details = new HashMap<>();
+
+		//Step 1: Login to POS
+		//		login.loginToApplication(CommonData.UserName1, CommonData.PassWord1);
+		//		base.setZoom(driver, 60);
+
+		// Step 2: Navigate to the Transaction page
+		this.HamBurgerButtonClick("iconShop");
+
+		Details = this.CreateCustomerOfferAdvance(CustomerId,Pieces, GrossWeight,DepositePercentage, Company, Location);
+
+		//Step 23: Go to transactions, Search customer, Click on Add to sale
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton expandedNavButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h5 textLeft centerY","Transaction"));
+		this.SearchByCustomerID(CustomerId ,UtilityTestData.MenuBarOptions[0]);
+
+		//Step 24: Choose advance-->advance collection
+		base.buttonClick(LoginPageObj.Edt_AlertText("Advance"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_return("Advance Collection"));
+
+		//Step 25: Choose type as order
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("OrderTypeOptions"), "Order");
+
+		//Step 26: Select the transaction number from the drop down
+		String OrderId = Details.get("OrderId");
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("TransTypeOptions"), OrderId);
+
+		//Step 27: Enter the deposit amount
+		String AdvanceAmount = Details.get("AdvanceAmount");
+		String WillingToPayAmount = Details.get("WillingToPayAmount");
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("DepAmount"), WillingToPayAmount);
+
+		System.out.println(WillingToPayAmount +" WillingToPayAmount");
+		System.out.println(AdvanceAmount +" AdvanceAmount");
+
+		//Step 28: Choose the sales person		
+		base.selectorByVisibleText(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Sel_GPPAccountNo("options: ArrSALESMAN"), UtilityTestData.SalePersonName);
+
+		//Step 29: Click on deposit button
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+
+		//Step 30: Click on the Amount
+		Thread.sleep(3000);
+		base.buttonClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+
+		//Step 31: Select a Payment method(Cash or Card)
+		base.buttonClick(NormalSaleGoldAndSilverObj.Sel_PaymentMethod("HDFC"));
+		String ExpectedAdvanceAmount = base.GetAttribte(NormalSaleGoldAndSilverObj.Edt_ApprCode("numpad-control-input primaryFontColor numpad-control-input-readonly"),"value").replace(",", "");
+		Thread.sleep(2000);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_IconReturnKey("paymentView fragment", "iconReturnKey"));
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("textInputDialogContent"), UtilityTestData.ApprCode);
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("textInputDialogContent"), UtilityTestData.CardNumber);
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Close"));
+
+		//Step 32: Post the Invoice
+		Thread.sleep(5000);
+		String NewPdfName = PdfUtilities.DownloadAndRenameLatestPDF("OfferAdvance");
+		Map<String, String> IntialAdvanceReceiptPdf   = PdfUtilities.OfferAdvancePdfValidation();
+		Details.put("AdvanceReceived",IntialAdvanceReceiptPdf.get("AdvanceReceived"));
+		return Details;
+	}	
+	/// <summary>
+	/// Method for multiple OG Converted to Normal Advance
+	/// Author-Jhoncy
+	/// </summary>	
+	public String MultipleOGConvertedToNormalAdvance(String CustomerID) throws Exception
+	{
+		this.HamBurgerButtonClick("iconShop");
+		//Select customer and click on add to sale button
+		Thread.sleep(2000);
+		this.SearchByCustomerID(CustomerID,UtilityTestData.MenuBarOptions[0]);
+
+		//Select OG
+		Thread.sleep(3000);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Edt_Name("Search"));
+		Thread.sleep(2000);
+		base.setData(NormalSaleGoldAndSilverObj.Edt_Name("Search"),UtilityTestData.OGProduct);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_CustomerSearch("Products"));
+
+		//Click on OG own and choose purchase
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_OP("dataListLine",UtilityTestData.Product));
+
+		//Select configuration
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Sel_Configuration("col grow"));
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_Configuration("col grow"),UtilityTestData.Purity22);
+
+		//Click on add item button
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+		base.buttonClick(LoginPageObj.Btn_SignInButton("Add item"));
+
+		//To Handle the Unexpected Error
+		WebDriverWait Wait = new WebDriverWait(driver, Duration.ofSeconds(8));
+		By CartChangedAlert = LoginPageObj.Btn_SignInButton(" Please try again later.");
+		By OkBtn = LoginPageObj.Btn_SignInButton("OK");
+
+		if (base.isElementPresent(driver, CartChangedAlert)) {		
+			try {
+				WebElement OkButton = Wait.until(ExpectedConditions.elementToBeClickable(OkBtn));
+				OkButton.click();
+			}
+			catch (TimeoutException e) {
+			}
+		}
+
+		//Note:OGPurchase
+		base.scrollToElement(NormalSaleGoldAndSilverObj.Ele_Name("NPurchase"));
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_Name("NPurchase"));
+
+		//Select QC Person
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("qcInput"),UtilityTestData.QCAndSmithPerson);
+
+		//Select Smith person
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("smInput"),UtilityTestData.QCAndSmithPerson); 
+
+		//Enter piece value
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("piecesogp"),UtilityTestData.GrossPieces);
+
+		//Enter gross weight
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightogp"),UtilityTestData.GrossWeight);
+
+		//Click on Calculate button
+		base.scrollToElementtoCenter(NormalSaleGoldAndSilverObj.Btn_Deposit("Calculate"));
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Calculate"));
+
+		//Click on Add to cart button
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		Thread.sleep(1000);
+		base.excuteJsClick(LoginPageObj.Edt_Alert("Add to Cart"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Ele_SKUNumber("margin0 h5 ellipsis maxWidth220", "1"));
+
+		//Select payment method as convert advance
+		//Choose normal advance
+		//Select sales person
+		//Select the due date and Enter remarks
+		//Click on nominee details
+		//Enter nominee name, nominee relation, Click on checkbox(same as customer address)Click on ok button and deposit button
+		//Click on deposit button
+		Thread.sleep(3000);
+		String PaymentAmount = base.GetText(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink")).replace("\u20B9", "").replace(",", "").trim();
+		String OGAmountDue = PaymentAmount.replaceAll("[^\\d.]", "");
+		System.out.println(OGAmountDue);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+		Thread.sleep(2000);
+
+		asrt.assertTrue(base.isExists(LoginPageObj.Edt_AlertText("Convert to Advance")),"The user is not able to view the payment methods");
+
+		Thread.sleep(2000);
+		base.buttonClick(LoginPageObj.Edt_AlertText(UtilityTestData.PaymentMode));	
+		Thread.sleep(4000);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Ele_SalesPerson(UtilityTestData.SalePersonNumber), UtilityTestData.SalePersonName);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Ele_DrpdwnYear("win-datepicker-year win-dropdown win-order2 displayOrder3"), UtilityTestData.DueYear);
+		base.scrollToElement(NormalSaleGoldAndSilverObj.Ele_Remarks("6"));
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Remarks("6"), UtilityTestData.Remarks);
+		base.scrollToElement(NormalSaleGoldAndSilverObj.Btn_Deposit("Add Nominee Details"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Add Nominee Details"));
+		Thread.sleep(1000);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Nominee name"),UtilityTestData.NomineeName);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Nominee relation"), UtilityTestData.NomineeRelation);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_Name("NomineeChkBox"));
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		base.scrollToElement(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));	
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+		Thread.sleep(3000);	
+
+		//Warning handling if present
+		try {
+			WebDriverWait ShortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+			WebElement Warning = ShortWait.until( ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Ele_Payement("Warning")) );
+			base.excuteJsClick(LoginPageObj.Btn_SignInButton("OK"));
+		} catch (Exception e) {
+			// Warning not found
+		}
+		base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+		base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Btn_Close("cancelButton primaryButton","Close"));
+		base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_NormalAdvInvoice("win-itembox","win-item","DOCUMENT NORMAL ADV. INVOICE"));
+		base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Btn_Close("btnblue","PRINT"));
+		base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+
+		return OGAmountDue;
+	}
+
+	/// <summary>
+	/// Method to validate the items in Recall page having OG, OD, OGT - before performing exchange or sales
+	/// Author - Christy Reji
+	/// Modified - Added support for multiple OG items with correct weight mapping
+	/// </summary>
+	public void RecallEstimateItemValidation(
+			List<String> ExpectedItemNames,          // All expected item names (Billing page)
+			List<String> ItemQuantity,               // All expected item quantities (Billing page)
+			List<String> ExpectedOGItemNames,        // OG item names to validate (in same order as their weights)
+			List<String> ExpectedGrossWeights,       // OG item weights to validate (same order as OG names)
+			double ExpectedSubtotal,
+			double ExpectedTax,
+			double ExpectedTotal,
+			int TotalLinesBillingPage,
+			String OGName) {
+
+		List<WebElement> ItemNamesFromRecall = base.GetElement(NormalSaleGoldAndSilverObj.Ele_ItemRecallEst("gridcell", "ITEM NAME"));
+		List<WebElement> QuantityFromRecall  = base.GetElement(NormalSaleGoldAndSilverObj.Ele_ItemRecallEst("gridcell", "QUANTITY"));
+
+		System.out.println("ItemNamesFromRecall: " + ItemNamesFromRecall);
+		System.out.println("QuantityFromRecall: " + QuantityFromRecall);
+
+		int TotalLinesRecallPage = ItemNamesFromRecall.size();
+		int OgIndex = 0; // Track which OG item we're validating
+
+		for (int k = 0; k < ItemNamesFromRecall.size(); k++) {
+			String ActualItemRaw = ItemNamesFromRecall.get(k).getText().trim();
+
+			// CASE 1: OG item validation
+			if (ExpectedOGItemNames.contains(ActualItemRaw)) {
+				String ExpectedOGName      = ExpectedOGItemNames.get(OgIndex);
+				String ExpectedOGWeightStr = ExpectedGrossWeights.get(OgIndex);
+
+				// Validate OG item name
+				asrt.assertEquals(ActualItemRaw,ExpectedOGName,"The "+OGName+ "Item Name mismatch: Expected " + ExpectedOGName + " but got " + ActualItemRaw + " in Recall page");
+
+				// Validate OG quantity
+				String QtyStr = QuantityFromRecall.get(k).getText().trim().replaceAll("[^\\d.]", "");
+				double ActualQty = Double.parseDouble(QtyStr);
+				double ExpectedQty = Double.parseDouble(ExpectedOGWeightStr);
+
+				asrt.assertEquals(ActualQty, ExpectedQty,"OG Quantity mismatch: Expected " + ExpectedQty + " but got " + ActualQty + " in Recall page");
+				System.out.println("The " + OGName + " Item Validation successful from recall page for item: " + ExpectedOGName);
+
+				OgIndex++; // Move to the next OG name & weight
+			}
+			// CASE 2: Non-OG item validation
+			else {
+				String ExpectedItemRaw = ExpectedItemNames.get(k).trim();
+
+				String ActualItemName = ActualItemRaw.contains("-")
+						? ActualItemRaw.substring(ActualItemRaw.lastIndexOf("-") + 1).trim()
+								: ActualItemRaw.trim();
+
+				String ExpectedItemName = ExpectedItemRaw.contains("-")
+						? ExpectedItemRaw.substring(ExpectedItemRaw.lastIndexOf("-") + 1).trim()
+								: ExpectedItemRaw.trim();
+
+				System.out.println("The names: " + ExpectedItemNames);
+				System.out.println("Expected: " + ExpectedItemRaw + "\nActual: " + ActualItemRaw);
+
+				asrt.assertEquals(ActualItemName,ExpectedItemName,"Item Name mismatch: Expected " + ExpectedItemName + " but got " + ActualItemName + " in Recall page");
+
+				String QtyStr         = QuantityFromRecall.get(k).getText().trim().replaceAll("[^\\d.]", "");
+				double ActualQty      = Double.parseDouble(QtyStr);
+				String ExpectedQtyStr = ItemQuantity.get(k).trim().replaceAll("[^\\d.]", "");
+				double ExpectedQty    = Double.parseDouble(ExpectedQtyStr);
+
+				asrt.assertEquals( ExpectedQty, ActualQty, "Quantity mismatch: Expected " + ExpectedQty + " but got " + ActualQty + " in Recall page");
+				System.out.println("The Non-" + OGName + " Item Validation successful from recall page");
+			}
+		}
+
+		// Totals validation
+		double actualTotalWithoutTax = Math.abs(Double.parseDouble(base.GetText(NormalSaleGoldAndSilverObj.Ele_TotWithoutTax("text: viewModel.TotalWithoutTax"))));
+		asrt.assertEquals(ExpectedSubtotal, actualTotalWithoutTax, "Total (Without Tax) mismatch: Expected " + ExpectedSubtotal + " but got " + actualTotalWithoutTax + " in Recall page");
+
+		double actualTax = Double.parseDouble(base.GetText(NormalSaleGoldAndSilverObj.Ele_TotWithoutTax("text: viewModel.TotalTax")));
+		asrt.assertEquals(ExpectedTax, actualTax, "Tax Value mismatch: Expected " + ExpectedTax + " but got " + actualTax + " in Recall page");
+
+		double actualSubTotal = Math.abs(Double.parseDouble(base.GetText(NormalSaleGoldAndSilverObj.Ele_TotWithoutTax("text: viewModel.SubTotal"))));
+		asrt.assertEquals(ExpectedTotal, actualSubTotal, "SubTotal mismatch: Expected " + ExpectedTotal + " but got " + actualSubTotal + " in Recall page");
+		asrt.assertEquals(TotalLinesBillingPage, TotalLinesRecallPage, "Total line count mismatch: Expected " + TotalLinesBillingPage + " but got " + TotalLinesRecallPage + " in Recall page");
+
+		System.out.println("======== Validation completed from recall page ==================");
+	}
+	// <summary>
+	// Method to Open any GPP scheme and take first collection
+	// Author: Chandana Babu
+	// </summary>
+	public String OpenGppAndTakeCollection(String CustomerNo, String Scheme, String InstallmentAmount,String SchemeCode,String IdProof, String IdProofNo) throws Exception {
+		//Go to GPP
+		base.ClickCondition(LoginPageObj.Edt_AlertText("GPP"));
+		//Select New GPP Account Opening
+		WebDriverWait Wait =new WebDriverWait(driver, Duration.ofSeconds(50));
+		Wait.until(ExpectedConditions.presenceOfElementLocated(NormalSaleGoldAndSilverObj.Btn_return("New GPP Account")));
+		Thread.sleep(2000);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_return("New GPP Account"));
+		//Search customer phone number
+		//Add to GPP ac open
+		this.SearchByCustomerID(CustomerNo,UtilityTestData.MenuBarOptions[6]);
+		//Select scheme code
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("SchmTypeOptions"),Scheme);
+		//Enter installment amount
+		Thread.sleep(2000);
+		base.clearData(NormalSaleGoldAndSilverObj.Ele_Name("InstlamtInput"));
+		Thread.sleep(2000);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("InstlamtInput"), InstallmentAmount);
+		//Select sales person
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("SalesPersonInput"),UtilityTestData.SalePersonNameWithNo);
+		String IdProofNumber= base.GetValue(NormalSaleGoldAndSilverObj.Ele_Name("Idproofno1"));
+		if (IdProofNumber == "") {
+			base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("IdTypeOptions"), IdProof);
+			base.setData(NormalSaleGoldAndSilverObj.Ele_Name("Idproofno1"), IdProofNo);
+		}
+		//Select bank proof type
+		base.selectorByVisibleText(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Sel_GPPAccountNo("BankProof"),UtilityTestData.BankProof);
+		//Enter nominee name
+		base.setData(GppOpeningAndCollectionMultiplePlansObj.Sel_GPPNomineeName("NomineeName"),UtilityTestData.NomineeName);
+		//Select nominee relation
+		base.selectorByVisibleText(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Sel_GPPAccountNo("NomineeRelation"),UtilityTestData.NomineeRelation);
+		//Click on check box( same as above)
+		base.ClickCondition(GppOpeningAndCollectionMultiplePlansObj.Sel_GPPNomineeName("IsSameAsAbove"));
+		//Click on save button
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_return("View more"));
+		Thread.sleep(2000);
+		base.excuteJsClick(LoginPageObj.Btn_SingnIn("SearchView_AppBarView_appBarCommandCommand"));	
+		Map<String, String> PdfDetails = PdfUtilities.ExtractDetailsFromGPPPdf(SchemeCode);
+		String ApplicationIdPdf   = PdfDetails.get("ApplicationID");
+		//Select customer
+		//Click on Add to sale button
+		this.SearchByCustomerID(CustomerNo,UtilityTestData.MenuBarOptions[0]);
+		//Click on GPP
+		base.ClickCondition(LoginPageObj.Edt_AlertText("GPP"));
+		//GPP collection entry
+		base.ClickCondition(NormalSaleGoldAndSilverObj.Btn_return("GPP Collection Entry"));
+		//Choose deposit type
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("OrderTypeOptions"),UtilityTestData.GPPDepositType);
+		//Enter transaction number
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("TransTypeOptions"), ApplicationIdPdf);
+		//Select sales person
+		base.selectorByVisibleText(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Sel_GPPAccountNo("options: ArrSALESMAN"),UtilityTestData.SalePersonName);		 
+		//Click on deposit
+		Thread.sleep(2000);
+		base.ClickCondition(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+		//Click on the Amount
+		base.ClickCondition(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+		//Select a Payment method(Cash or Card)
+		base.ClickCondition(NormalSaleGoldAndSilverObj.Sel_PaymentMethod("HDFC"));
+		String ExpectedAdvanceAmount = base.GetAttribte(NormalSaleGoldAndSilverObj.Edt_ApprCode("numpad-control-input primaryFontColor numpad-control-input-readonly"),"value").replace(",", "");
+		base.ClickCondition(NormalSaleGoldAndSilverObj.Btn_IconReturnKey("paymentView fragment", "iconReturnKey"));
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("textInputDialogContent"), UtilityTestData.ApprCode);
+		base.ClickCondition(LoginPageObj.Btn_SignInButton("OK"));
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("textInputDialogContent"), UtilityTestData.CardNumber);
+		base.ClickCondition(LoginPageObj.Btn_SignInButton("OK"));
+		base.ClickCondition(NormalSaleGoldAndSilverObj.Btn_Deposit("Close"));
+		return ApplicationIdPdf;
+	}
+
+	/// <summary>
+	/// Method for multiple SR Converted to Normal Advance
+	/// Author - nivya
+	/// </summary>
+	public Map<String, String> MultipleSRConvertedToNormalAdvance(
+			String CustomerID,
+			List<String> CounterTransfer,
+			List<String> ReturnProducts) throws Exception {
+
+		Map<String, String> Result = new HashMap<>();
+
+		this.HamBurgerButtonClick("iconShop");
+
+		// Step 1: Select customer and click on add to sale button
+		this.SearchByCustomerID(CustomerID, UtilityTestData.MenuBarOptions[0]);
+
+		// Step 2: Scan Multiple SKU's, click on Add to cart button and Select any one of the sales agent
+		List<String> AllSkuList = new ArrayList<>();
+		for (int j = 0; j + 2 < CounterTransfer.size(); j += 3) {
+			List<String> RequiredSkuList = this.SelectMultipleSKUs(
+					Integer.parseInt(CounterTransfer.get(j)),
+					"Inter",
+					CounterTransfer.get(j + 1),
+					CounterTransfer.get(j + 2)
+					);
+			AllSkuList.addAll(RequiredSkuList);
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation(
+					"headerSplitViewToggleButton expandedNavButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
+			base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h5 textLeft centerY", "Transaction"));
+		}
+
+		Map<String, String> ScannedSKUDataMap = new LinkedHashMap<>();
+		for (int i = 0; i < AllSkuList.size(); i++) {
+			this.SKUIngridentTableValues(AllSkuList.get(i), i + 1, ScannedSKUDataMap);
+		}
+
+		// Step 3: Click on the Amount and Select a Payment method (Cash or Card)
+		String PaymentAmount = this.PaymentAfterRecallEstimate("HDFC");
+
+		// Step 4: Post the Invoice
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell", "Original For Recipient"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("PRINT"));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(8));
+		String TaxInvoiceName = PdfUtilities.DownloadAndRenameLatestPDF("Method_TaxInvoice");
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(7));
+		String TaxInvoice = System.getProperty("user.dir") + "\\Invoices\\" + TaxInvoiceName + "";
+		String InvoiceNo = PdfUtilities.ExtractReceiptNoFrmSaleInvoice(TaxInvoice);
+		base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+
+		System.out.println("Generated Invoice No: " + InvoiceNo);
+
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
+		SearchByCustomerID(CustomerID, UtilityTestData.MenuBarOptions[0]);
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
+		// Click on customer adjustment, return transaction, Receipt Number, Return Product, Return Button
+		ReturnDetails Details = ReturnMultipleProductsWithDetails(InvoiceNo, ReturnProducts);
+
+		// Click on the Amount, Payment method, transaction type, due date, Nominee details, Deposit button
+		String PaymentAmountSR = base.GetText(
+				NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink")
+				).replace("\u20B9", "").replace(",", "").trim();
+
+		String SRAmountDue = PaymentAmountSR.replaceAll("[^\\d.]", "");
+		System.out.println(SRAmountDue);
+
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+		Thread.sleep(2000);
+
+		asrt.assertTrue(
+				base.isExists(LoginPageObj.Edt_AlertText("Convert to Advance")),
+				"The user is not able to view the payment methods"
+				);
+
+		Thread.sleep(2000);
+		base.buttonClick(LoginPageObj.Edt_AlertText(UtilityTestData.PaymentMode));
+		Thread.sleep(4000);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Ele_SalesPerson(UtilityTestData.SalePersonNumber), UtilityTestData.SalePersonName);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Ele_DrpdwnYear("win-datepicker-year win-dropdown win-order2 displayOrder3"), UtilityTestData.DueYear);
+		base.scrollToElement(NormalSaleGoldAndSilverObj.Ele_Remarks("6"));
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Remarks("6"), UtilityTestData.Remarks);
+		base.scrollToElement(NormalSaleGoldAndSilverObj.Btn_Deposit("Add Nominee Details"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Add Nominee Details"));
+		Thread.sleep(1000);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Nominee name"), UtilityTestData.NomineeName);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Nominee relation"), UtilityTestData.NomineeRelation);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_Name("NomineeChkBox"));
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		base.scrollToElement(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_Amnt("h1"));
+		Thread.sleep(3000);
+
+		// Warning handling if present
+		try {
+			WebDriverWait ShortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+			WebElement Warning = ShortWait.until(
+					ExpectedConditions.visibilityOfElementLocated(NormalSaleGoldAndSilverObj.Ele_Payement("Warning"))
+					);
+			base.excuteJsClick(LoginPageObj.Btn_SignInButton("OK"));
+		} catch (Exception e) {
+			// Warning not found
+		}
+
+		base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+		base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Btn_Close("cancelButton primaryButton", "Close"));
+		base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_NormalAdvInvoice("win-itembox", "win-item", "DOCUMENT NORMAL ADV. INVOICE"));
+		base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Btn_Close("btnblue", "PRINT"));
+		base.buttonClick(LoginPageObj.Btn_SignInButton("Close"));
+
+		// Store both values in result map
+		Result.put("InvoiceNo", InvoiceNo);
+		Result.put("PaymentAmountSR", PaymentAmountSR);
+
+		return Result;
+	}
+
+	// <summary>
+	// Method to Create offer advance with Reserve Sku and take first collection
+	// Author: Sangeetha M S
+	// </summary>
+	public Map<String, String> OfferAdvanceReserveSkuAndTakeCollection(String CustomerPhoneNo, int SkuCount, String TransferType,String FromCounterGold,String MetalTypeGold, double DepositPercent) throws Exception 
+	{
+		Map<String, String> OfferAdvanceDataMap = new HashMap<>();
+
+		//Select SKU Number
+		List<String> GoldSku =SelectMultipleSKUs(SkuCount,TransferType,FromCounterGold,MetalTypeGold);
+		List<String> SkuList=new ArrayList<>();
+		SkuList.addAll(GoldSku);
+		String SkuNumber = SkuList.get(0);		
+		Thread.sleep(3000);
+		HamBurgerButtonClick("iconShop");	
+		Thread.sleep(2000);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart("h1 marginBottom0 button-content-abc primaryFontColor"));
+		base.setDataWithoutClear(NormalSaleGoldAndSilverObj.Edt_Name("Search or enter quantity"), SkuNumber);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_AddtoCart("h1 marginBottom0 iconReturnKey button-content-return"));
+		base.setZoom(driver, 40);
+		double ExpectedTotalCValueInItemDetailsPage = Double.parseDouble(base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("valueInput"), "value"));
+		double ExpectedGrossWeightInItemDetailspage =  Double.parseDouble(base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("grossWeightInput"), "value"));		
+		double ExpectedTotalAmountInItemDetailPage = Double.parseDouble(base.GetAttribte(NormalSaleGoldAndSilverObj.Ele_Name("totalInput"), "value"));
+		Thread.sleep(3000);
+		HamBurgerButtonClick("iconShop");	
+
+		//Click on advance
+		//Select customer order
+		base.buttonClick(LoginPageObj.Edt_AlertText("Advance"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_return("Customer Order"));
+
+		//Search customer and click on add to customer order
+		Thread.sleep(3000);
+		SearchByCustomerIDForGPP(CustomerPhoneNo, UtilityTestData.MenuBarOptions[7]);
+
+		//Enter the SKU number in the field and click enter
+		base.setData(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_ScanSku("AddSKUAutomatic "), SkuNumber);
+		base.pressKey(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_ScanSku("AddSKUAutomatic "), "ENTER");
+		Thread.sleep(2000);
+		String ActualGrossWeightInCustomerOrderPge=base.GetText(NormalSaleGoldAndSilverObj.Btn_CartMoney("column3", "h4 ellipsis cell"));
+		double ActualGrossWeightInCustomerOrderPage = Double.parseDouble(base.GetText(NormalSaleGoldAndSilverObj.Btn_CartMoney("column3", "h4 ellipsis cell")));
+		double ActualCValueInCustomerOrderPage = Double.parseDouble(base.GetText(NormalSaleGoldAndSilverObj.Btn_CartMoney("column4", "h4 ellipsis cell")));
+		String TotalInCustomerOrderPage=base.GetText(NormalSaleGoldAndSilverObj.Btn_CartMoney("column7", "h4 ellipsis cell"));
+		double ActualTotalAmountInCustomerOrderPage = Double.parseDouble(base.GetValue(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Ele_GPPCustAccnt("TotAmtInput")));
+		OfferAdvanceDataMap.put("TotalInCustomerOrderPage", TotalInCustomerOrderPage);
+		OfferAdvanceDataMap.put("ActualGrossWeightInCustomerOrderPge", ActualGrossWeightInCustomerOrderPge);
+
+		//Verify while nominee detail getting removed if we update any other details after updating the nominee details.
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(LoginPageObj.Btn_SingnIn("MGDRetail_MGDRetail_Extensions_OrderView_NomineeDetailsAppBarCommandCommand"));
+		Thread.sleep(1000);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: NomineeName"),UtilityTestData.NomineeName);
+		base.selectorByVisibleText(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Sel_GPPAccountNo("options: NomineeRelationArr"),UtilityTestData.NomineeRelation );
+		base.buttonClick(NormalSaleGoldAndSilverObj.Ele_Name("NomineeChkBox"));	
+		String Address = base.GetText(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: NomineeAddress"));
+		if(Address == "") 
+		{
+			base.setData(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: NomineeAddress"),UtilityTestData.NomineeAddress);
+			base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		}
+		else
+		{
+			base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		}			
+
+		//Select the 'Is offer order' checkbox
+		base.buttonClick(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_CheckBox("checkbox", "IsofferChkBox"));
+
+		//Add nominee details
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(LoginPageObj.Btn_SingnIn("MGDRetail_MGDRetail_Extensions_OrderView_NomineeDetailsAppBarCommandCommand"));
+		Thread.sleep(1000);
+		WebElement NomineeNameField = driver.findElement(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Ele_GPPCustAccnt("NmInput"));
+		String NomineeName = NomineeNameField.getAttribute("value");
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("secondaryButton"));
+
+		//Choose the company and invent location
+		base.selectorByVisibleText(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_IsOrder("col", "viewModel.IsOrderEntry"), UtilityTestData.Company[0]);
+		base.selectorByVisibleText(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_IsOrder("col stretch", "viewModel.IsOrderEntry"), UtilityTestData.Location[0]);
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_BankProofType("Sales person"), UtilityTestData.SalePersonName);
+
+		//Select the order line
+		base.buttonClick(LoginPageObj.Ele_ErrorMessage("win-itembox"));
+
+		//Select the ingredient line
+		base.scrollToElement(LoginPageObj.Ele_ErrorMessage("win-itembox"));
+		base.buttonClick(LoginPageObj.Ele_ErrorMessage("win-itembox"));
+
+		//Click on willing to pay button
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_MenuBarOptions("MGDRetail_MGDRetail_Extensions_OrderView_appWillToPayCommandCommand"));
+
+		//Enter the amount
+		String WillingToPayAmount = Double.toString(ActualTotalAmountInCustomerOrderPage*DepositPercent);
+		OfferAdvanceDataMap.put("WillingToPayAmount", WillingToPayAmount);
+		Thread.sleep(1000);
+		base.setData(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Amount("value: WILLAMT", "number"), WillingToPayAmount);
+		Thread.sleep(1000);
+		String ExpectedOfferExpiryDate= base.GetValue(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: SDATE"));
+		String ExpectedValidityDays = base.GetValue(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: SDAYS")).replaceAll("\\D+", "");;
+		OfferAdvanceDataMap.put("ExpectedOfferExpiryDate", ExpectedOfferExpiryDate);
+		OfferAdvanceDataMap.put("ExpectedValidityDays", ExpectedValidityDays);
+
+		//Click on apply button
+		base.buttonClick(LoginPageObj.Btn_SignInButton("APPLY"));
+
+		//Click on edit line
+		Thread.sleep(3000);
+		base.ClickCondition(NormalSalesReturnGoldSilverReturnSaleCounterObj.Txt_Sku("win-structuralnodes win-selectionmode"));
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_MenuBarOptions("MGDRetail_MGDRetail_Extensions_OrderView_EditSlappBarCommandCommand"));
+
+		//Enter the line delivery date
+		DateTimeFormatter Formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate ExpiryDate = LocalDate.parse(ExpectedOfferExpiryDate, Formatter);
+		LocalDate TargetDate = ExpiryDate.minusDays(1);
+		String Day = Integer.toString(TargetDate.getDayOfMonth());
+		String Month = Integer.toString(TargetDate.getMonthValue() - 1); 
+		String Year = Integer.toString(TargetDate.getYear());	
+		base.selectorByValue(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Date("content ExtensionTemplateDialog", "win-datepicker-date"), Day);
+		base.selectorByValue(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Date("content ExtensionTemplateDialog", "win-datepicker-month"), Month);
+		base.selectorByValue(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Date("content ExtensionTemplateDialog", "win-datepicker-year"), Year);
+
+		//Enter remarks
+		base.setData(AdvanceCollectionNormalAdvanceOfferAdvanceConvertToAdvanceObj.Ele_Remarks("value: Remarks"),UtilityTestData.Remarks);
+
+		//Click on OK button
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+
+		//Add nominee details, Select a sales person
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(LoginPageObj.Btn_SingnIn("MGDRetail_MGDRetail_Extensions_OrderView_NomineeDetailsAppBarCommandCommand"));
+		Thread.sleep(1000);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: NomineeName"),UtilityTestData.NomineeName);
+		base.selectorByVisibleText(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Sel_GPPAccountNo("options: NomineeRelationArr"), UtilityTestData.NomineeRelation);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Ele_Name("NomineeChkBox"));	
+		String Address1 = base.GetText(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: NomineeAddress"));
+		if(Address1 == "")
+		{
+			base.setData(NormalSaleGoldAndSilverObj.Ele_SameAsAbove("value: NomineeAddress"),UtilityTestData.NomineeAddress);
+			base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		}
+		else 
+		{
+			base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		}
+
+		//Click on save button
+		base.buttonClick(OldPurchaseExchangeOwnorOtherGoldorSilverSaleObj.Btn_ThreeDots("win-commandingsurface-actionarea win-appbar-actionarea"));
+		base.buttonClick(LoginPageObj.Btn_SingnIn("MGDRetail_MGDRetail_Extensions_OrderView_appBarCommandCommand"));
+		Thread.sleep(1000);
+		base.buttonClick(LoginPageObj.Btn_SignInButton("YES"));
+		String Remark = base.GetText(NormalSaleDiamondandPlatinumObj.Ele_GrossWeight("text: content"));
+		String OrderId = Remark.split(" - ")[1].split(" ")[0];
+		OfferAdvanceDataMap.put("OrderId", OrderId);
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+
+		//Go to transactions
+		//Step Search customer
+		//Step Click on add to sale button
+		Thread.sleep(3000);
+		HamBurgerButtonClick("iconShop");
+		Thread.sleep(1000);
+		SearchByCustomerID(CustomerPhoneNo ,UtilityTestData.MenuBarOptions[0]);
+
+		//Choose advance-->advance collection
+		base.buttonClick(LoginPageObj.Edt_AlertText("Advance"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_return("Advance Collection"));
+		Thread.sleep(5000);
+		if(base.isExists(LoginPageObj.Btn_SingnIn("Button1Close")))
+		{
+		  base.ClickCondition(LoginPageObj.Btn_SingnIn("Button1Close"));	
+		}
+
+		//Choose type as order
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("OrderTypeOptions"), "Order");
+
+		//Select the transaction number from the drop down
+		base.selectorByVisibleText(NormalSaleGoldAndSilverObj.Sel_DepositType("TransTypeOptions"), OrderId);
+
+		//Enter the deposit amount
+		Thread.sleep(2000);
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("DepAmount"),WillingToPayAmount);	
+		Thread.sleep(2000);
+		base.selectorByVisibleText(GPPSettlementAverageRateSingleSkuMultipleSkuObj.Sel_GPPAccountNo("options: ArrSALESMAN"),UtilityTestData.SalePersonName);
+		Thread.sleep(2000);
+		base.excuteJsClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Deposit"));
+
+		//Click on the Amount
+		Thread.sleep(3000);
+		base.excuteJsClick(NormalSalesReturnGoldSilverReturnSaleCounterObj.Ele_Amount("cartView_amountDueLink"));
+		Thread.sleep(5000);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Sel_PaymentMethod("HDFC"));
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_IconReturnKey("paymentView fragment", "iconReturnKey"));
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("textInputDialogContent"), UtilityTestData.ApprCode);
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		base.setData(NormalSaleGoldAndSilverObj.Ele_Name("textInputDialogContent"), UtilityTestData.CardNumber);
+		Thread.sleep(2000);
+		base.buttonClick(LoginPageObj.Btn_SignInButton("OK"));
+		Thread.sleep(2000);
+		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Deposit("Close"));
+
+		//Post the Invoice			
+		Map<String, String> FirstAdvanceReceiptPdf = PdfUtilities.OfferAdvancePdfValidation();
+		String FirstAdvanceReceived = FirstAdvanceReceiptPdf.get("AdvanceReceived");
+		OfferAdvanceDataMap.put("FirstAdvanceReceived", FirstAdvanceReceived);
+
+		return OfferAdvanceDataMap;
+	}
+
 }

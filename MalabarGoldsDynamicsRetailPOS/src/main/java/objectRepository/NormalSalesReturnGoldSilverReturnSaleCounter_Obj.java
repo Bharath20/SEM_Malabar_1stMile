@@ -13,7 +13,8 @@ public class NormalSalesReturnGoldSilverReturnSaleCounter_Obj
 	public By Ele_NormalAdvInvoice(String class1, String class2, String value) {return By.xpath("//div[contains(@class,'"+class1+"')]//div[@class='"+class2+"' and @aria-label='"+value+"']");}
 	public By Ele_SpecifyPrice(String text) {return By.xpath("//h3[contains(text(),'"+text+"')]");}
 	public By Ele_RecipetNumber() {return By.xpath("//div[@id='dataListSrcTransfer']//div[@class='win-itemsblock']//div[contains(@class,'win-container win-container')]");}
-
+	public By Ele_AmountDue(String clas,String data) {return By.xpath("//a[@class='"+clas+"' and @data-ax-bubble='"+data+"']");};
+	
 	//Btn
 	public By Btn_Close(String class1, String text) {return By.xpath("//button[@class='"+class1+"' and text()='"+text+"']");}
 	public By Btn_ReciptClose() {return By.xpath("(//div[@class='marginTop0'])[3]/following-sibling::div//button");}

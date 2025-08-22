@@ -219,17 +219,34 @@ public class BasePge {
 	/// Select values in the dropdown
 	/// </summary>
 
-	public void selectorByVisibleText(By locator,String text) {     //drpdown
-		setZoom(driver, 60);
-		WebDriverWait wait = getWait();
-		WebElement webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-		//webElement = driver.findElement(locator);
-		highLighterMethod(driver, webElement); 
-		select = new Select(webElement);
-		select.selectByVisibleText(text);
+//	public void selectorByVisibleText(By locator,String text) {     //drpdown
+//		setZoom(driver, 60);
+//		WebDriverWait wait = getWait();
+//		WebElement webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+//		//webElement = driver.findElement(locator);
+//		highLighterMethod(driver, webElement); 
+//		select = new Select(webElement);
+//		select.selectByVisibleText(text);
+//
+//	}
+	public void selectorByVisibleText(By locator, String text) {
+	    WebDriverWait wait = getWait();
 
+	    // Wait until it's visible and enabled
+	    WebElement dropdown = wait.until(ExpectedConditions.elementToBeClickable(locator));
+
+	    highLighterMethod(driver, dropdown);
+
+	    Select select = new Select(dropdown);
+	    select.selectByVisibleText(text);
+
+	    // Wait until the selection is applied
+	    wait.until(ExpectedConditions.textToBePresentInElement(
+	        select.getFirstSelectedOption(), text));
+
+	    // Debug: print what was selected
+	    //System.out.println("Selected: " + select.getFirstSelectedOption().getText());
 	}
-
 	/// <summary>
 	/// Select values in the dropdown based on Index
 	/// </summary>
@@ -1084,25 +1101,25 @@ public class BasePge {
 	/// To fetch random numbers not starting from zero
 	/// </summary>
 	public static String CreateRandomNumberWithoutLeadingZero(int n) {
-	    if (n <= 0) {
-	        throw new IllegalArgumentException("Length must be positive");
-	    }
+		if (n <= 0) {
+			throw new IllegalArgumentException("Length must be positive");
+		}
 
-	    StringBuilder sb = new StringBuilder(n);
-	    String nonZeroDigits = "123456789";
-	    String allDigits = "0123456789";
+		StringBuilder sb = new StringBuilder(n);
+		String nonZeroDigits = "123456789";
+		String allDigits = "0123456789";
 
-	    // Ensure the first digit is not zero
-	    sb.append(nonZeroDigits.charAt((int)(Math.random() * nonZeroDigits.length())));
+		// Ensure the first digit is not zero
+		sb.append(nonZeroDigits.charAt((int)(Math.random() * nonZeroDigits.length())));
 
-	    for (int i = 1; i < n; i++) {
-	        sb.append(allDigits.charAt((int)(Math.random() * allDigits.length())));
-	    }
+		for (int i = 1; i < n; i++) {
+			sb.append(allDigits.charAt((int)(Math.random() * allDigits.length())));
+		}
 
-	    return sb.toString();
+		return sb.toString();
 	}
 
-	
+
 	///<summary>
 	///To click on an element using Action class
 	///</summary>
@@ -1112,30 +1129,95 @@ public class BasePge {
 		WebElement webElement = driver.findElement(locator);
 		action.moveToElement(webElement).click().build().perform();
 	}
-  
-  public String getSelectedDropdownValue(By dropdownLocator) {
-	        WebElement dropdownElement = driver.findElement(dropdownLocator);
-	        Select select = new Select(dropdownElement);
-	        return select.getFirstSelectedOption().getText();
-  }
-  
-///<Summary>
+
+	public String getSelectedDropdownValue(By dropdownLocator) {
+		WebElement dropdownElement = driver.findElement(dropdownLocator);
+		Select select = new Select(dropdownElement);
+		return select.getFirstSelectedOption().getText();
+	}
+	/// <summary>
+	/// Clicks an input field, clears existing data, and enters the given value.
+	/// </summary>
+	public void ClickClearEnter(By locator, String value) {
+		setZoom(driver, 60);
+		WebDriverWait wait = getWait();
+
+		WebElement webElement = wait.until(ExpectedConditions.elementToBeClickable(locator));
+		highLighterMethod(driver, webElement);
+
+		webElement.click();
+		webElement.clear();
+		webElement.sendKeys(value);
+	}	
+
+	public void actionSetData(By locator,String Text) {
+
+		setZoom(driver, 60);
+		WebDriverWait wait = getWait();
+		WebElement webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+		Actions act = new Actions(driver);
+		act.moveToElement(webElement)
+		.click()
+		.sendKeys(Text)
+		.build()
+		.perform();
+	}
+
+	///<Summary>
 	///Method to try to perform any one of the click
 	///@Author: Gokul.P
 	///</Summary>
 	public void ClickCondition(By locator)
 	{
-		try
+		try 
 		{
 			buttonClick(locator);
-		} catch (Exception e)
+		} catch (Exception e) 
 		{
-			try
+			try 
 			{
 				excuteJsClick(locator);
 			} catch (Exception ignored) {}
 		}
 	}
+	/// <summary>
+	/// Select values in the dropdown
+	/// </summary>
+	public void selectorByValue(By locator, String value) {
+		setZoom(driver, 60);  // Optional zoom logic
+		WebDriverWait wait = getWait();
+		WebElement webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+		highLighterMethod(driver, webElement);  // Optional highlight logic
+		Select select = new Select(webElement);
+		select.selectByValue(value);
+	}
 	
 
+	///<Summary>
+		///Method to verify whether the option not present in the list
+		///@Author: Christy Reji
+		///</Summary>
+		public void VerifyOptionNotPresent(By locator, String optionText) {
+			setZoom(driver, 60);
+			WebDriverWait wait      = getWait();
+			WebElement webElement   = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+			highLighterMethod(driver, webElement);
+
+			Select select            = new Select(webElement);
+			List<WebElement> options = select.getOptions();
+
+			boolean isPresent        = false;
+			for (WebElement option : options) {
+				if (option.getText().trim().equalsIgnoreCase(optionText.trim())) {
+					       isPresent = true;
+					       break;
+				}
+			}
+
+			if (isPresent) {
+				throw new AssertionError("Option '" + optionText + "' is present in the dropdown, but it should not be.");
+			} else {
+				System.out.println("Verified: Option '" + optionText + "' is not present in the dropdown.");
+			}
+		}
 }

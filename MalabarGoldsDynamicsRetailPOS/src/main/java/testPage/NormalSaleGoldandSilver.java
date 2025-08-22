@@ -669,8 +669,10 @@ public class NormalSaleGoldandSilver extends BasePge {
 		base.setZoom(driver, 60);
 
 		// Step 2: Click on Transaction button
-		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton expandedNavButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
-		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h5 textLeft centerY","Transaction"));
+		//base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton expandedNavButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
+		//base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h5 textLeft centerY","Transaction"));
+		Thread.sleep(5000);
+		appUtils.HamBurgerButtonClick("iconShop");
 
 		// Step 3: Select customer
 		// Step 4: Click on add to estimation button
@@ -825,9 +827,7 @@ public class NormalSaleGoldandSilver extends BasePge {
 
 		// Step 2: Navigate to the Transaction page 
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("headerSplitViewToggleButton expandedNavButton iconGlobalNavButton win-splitviewpanetoggle win-disposable"));
-		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h5 textLeft centerY","Transaction"));
-
+		appUtils.HamBurgerButtonClick("iconShop");
 
 		// Step 3 : Select customer and click in add to estimate button
 		// Step 4 : Click on add to estimate button	
@@ -962,9 +962,7 @@ public class NormalSaleGoldandSilver extends BasePge {
 		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Cash("tab-button-ButtonGrid2","text semilight primaryFontColor"));
 		base.buttonClick(LoginPageObj.Edt_AlertText("Recall Estimate"));
 		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
-		base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), EstmnNumber);
-		base.excuteJsClick(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"));
-		base.setData(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), EstmnNumber);
+		base.ClickClearEnter(NormalSaleGoldAndSilverObj.Ele_EstmnNumber("Filter"), EstmnNumber);
 		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Transaction("h4 ellipsis cell",EstmnNumber));
 		base.buttonClick(NormalSaleGoldAndSilverObj.Btn_Estimation("win-disposable win-command AppBarCommand iconGo"));
 
