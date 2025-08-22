@@ -1,0 +1,116 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AutomationTestSuite" parallel="false">
+  
+  <!-- Extent Report Listener -->
+  <listeners>
+    <listener class-name="extentReporterpack.ExtentReportListner"/>
+    <listener class-name="utilPack.RetryListener"/>    
+  </listeners>
+
+  <!-- Test configuration -->
+  <test thread-count="1" name="FunctionalTests">
+    
+    <!-- Parameter for browser -->
+    <parameter name="Browser" value="Chrome"/>
+
+    <!-- Test classes -->
+   
+     <classes>
+    
+     <class name="testScenario.NormalSaleGoldandSilver.NormalSaleGoldandSilver_Test">
+     <methods>
+     <include name="TC01_NormalSaleGoldandSilverTest()"/>
+     <include name="TC02_NormalSaleGoldandSilverTest()"/>
+     <include name="TC03_NormalSaleGoldandSilverTest()"/>
+     <include name="TC04_NormalSaleGoldandSilverTest()"/>
+     <include name="TC05_NormalSaleGoldandSilverTest()"/>
+     <include name="TC06_NormalSaleGoldandSilverTest()"/>
+     </methods>
+     </class>  
+  
+     <class name="testScenario.NormalSaleDiamondandPlatinum.NormalSaleDiamondandPlatinum_Test">
+     <methods>
+     <include name="TC07_NormalSaleDiamondandPlatinumTest()"/>
+     <include name="TC08_NormalSaleDiamondandPlatinumTest()"/>
+     <include name="TC09_NormalSaleDiamondandPlatinumTest()"/>
+     <include name="TC10_NormalSaleDiamondandPlatinumTest()"/>
+     <include name="TC11_NormalSaleDiamondandPlatinumTest()"/>
+     </methods>
+     </class>
+      
+     <class name="testScenario.NormalSalesReturnGoldSilverReturnSaleCounter.NormalSalesReturnGoldSilverReturnSaleCounter_Test">
+     <methods>
+     <include name="TC12_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC13_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC14_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC15_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC16_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC17_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC18_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC19_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     <include name="TC20_NormalSalesReturnGoldSilverReturnSaleCounterTest()"/>
+     </methods>
+     </class>  
+  
+	 <class name="testScenario.NormalSalesReturnDiamondPlatinumReturnSaleCounter.NormalSalesReturnDiamondPlatinumReturnSaleCounter_Test">
+	 <methods>
+	 <include name="TC23_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+	 <include name="TC24_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+	 <include name="TC25_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+	 <include name="TC26_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+	 <include name="TC27_NormalSalesReturnDiamondPlatinumReturnSaleCounterTest()"/>
+	 </methods>
+	 </class>
+	  
+     <class name="testScenario.NormalSaleUncutandPrecia.NormalSaleUncutandPrecia_Test">
+     <methods>
+     <include name="TC30_NormalSaleUncutandPreciaTest()"/>
+     <include name="TC31_NormalSaleUncutandPreciaTest()"/>
+     <include name="TC32_NormalSaleUncutandPreciaTest()"/>
+     <include name="TC33_NormalSaleUncutandPreciaTest()"/>
+     </methods>
+     </class>  
+     
+     <class name="testScenario.NormalSalesReturnUncutorPrecia.NormalSalesReturnUncutorPrecia_Test">
+     <methods>
+     <include name="TC35_NormalSalesReturnUncutorPreciaTest()"/>
+     <include name="TC36_NormalSalesReturnUncutorPreciaTest()"/>
+     <include name="TC37_NormalSalesReturnUncutorPreciaTest()"/>
+     </methods>
+     </class>
+    
+     <class name="testScenario.OldPurchaseExchangeOwnorOtherGoldorSilverSale.OldPurchaseExchangeOwnorOtherGoldorSilverSale_Test">
+     <methods>
+     <include name="TC39_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <include name="TC40_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <include name="TC41_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <include name="TC42_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     <include name="TC47_OldPurchaseExchangeOwnorOtherGoldorSilverSaleTest()"/>
+     </methods>
+     </class>  
+     
+     <class name="testScenario.OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactions.OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactions_Test">
+     <methods>
+     <include name="TC61_OldExchangeOwnDiamondPlatinumPreciaUncutStoreTransactionsTest()"/>
+     </methods>
+     </class>
+     
+     <class name="testScenario.CustomerCreation.CustomerCreation_Test">
+     <methods>
+     <include name="TC129_CustomerCreationTest()"/>
+     <include name="TC131_CustomerCreationTest()"/>
+     <include name="TC138_CustomerCreationTest()"/>
+     </methods>
+     </class>
+     
+     <class name="testScenario.StatementPosting.StatementPosting_Test">
+     <methods>
+     <include name="TC310_StatementPostingTest()"/>
+     </methods>
+     </class>
+    
+    </classes>
+
+    
+  </test>
+</suite>
